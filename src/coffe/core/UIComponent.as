@@ -1,9 +1,13 @@
 package coffe.core
 {
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.filters.ColorMatrixFilter;
 	import flash.utils.Dictionary;
+	import flash.utils.getDefinitionByName;
 	
 	public class UIComponent extends Sprite
 	{
@@ -16,13 +20,18 @@ package coffe.core
 		public function UIComponent()
 		{
 			super();
+			configDefaultStyle();
+			configUI();
 			initEvents();
-			callLater(configUI);
+		}
+		
+		protected function configDefaultStyle():void
+		{
+			
 		}
 		
 		protected function configUI():void
 		{
-			
 		}
 		
 		protected function initEvents():void
@@ -121,6 +130,35 @@ package coffe.core
 				delete(methods[method]);
 			}
 			inCallLaterPhase = false;
+		}
+		
+		/**
+		 * @private (protected)
+		 *
+		 * @langversion 3.0
+		 * @playerversion Flash 9.0.28.0
+		 */
+		protected function getDisplayObjectInstance(style:String):DisplayObject {
+			var classDef:Object = null;
+			try {
+				classDef = getDefinitionByName(style);
+			}catch(e:Error) {
+				try {
+					classDef = loaderInfo.applicationDomain.getDefinition(style) as Object;
+				} catch (e:Error) {
+					// Nothing
+				}
+			}
+			
+			if(classDef == null) {
+				return null;
+			}
+			var instance:Object = new classDef();
+			if(instance is BitmapData)
+			{
+				return new Bitmap(instance as BitmapData);
+			}
+			return instance as DisplayObject;
 		}
 		
 		public function dispose():void

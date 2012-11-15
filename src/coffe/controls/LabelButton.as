@@ -9,38 +9,37 @@ package coffe.controls
 
 	public class LabelButton extends BaseButton
 	{
-		private var _bg:DisplayObject;
-		private var _textField:TextField;
-		private var _lable:String="LableButton";
+		private var _labelTF:TextField;
+		private var _label:String="LableButton";
 		public function LabelButton()
 		{
 			super();
 		}
 		
+		[Inspectable(type="String",defaultValue="Label")]
+		public function set label(value:String):void
+		{
+			_labelTF.text = value;
+			_labelTF.x = (bg.width-_labelTF.textWidth)*.5;
+		}
+		
+		[Inspectable(type="Color",defaultValue=0)]
+		public function set textColor(value:uint):void
+		{
+			_labelTF.textColor = value;
+		}
+		
 		override protected function configUI():void
 		{
-			var cls:Class = getDefinitionByName(_bgStyle) as Class;
-			var instance:Object = new cls();
-			if(_bg)
+			super.configUI();
+			if(_labelTF == null)
 			{
-				if(contains(_bg))removeChild(_bg);
+				_labelTF = new TextField();
+				_labelTF.selectable = false;
+				_labelTF.text = "ok";
 			}
-			if(instance is BitmapData)
-			{
-				_bg = new Bitmap(BitmapData(instance));
-			}else
-			{
-				_bg = instance as DisplayObject;
-			}
-			addChild(_bg);
-			if(!_textField)
-			{
-				_textField = new TextField();
-				_textField.type = TextFieldType.DYNAMIC;
-				_textField.text = _lable;
-			}
-			addChild(_textField);
-			_textField.x = (_bg.width-_textField.textWidth)*.5;
+			addChild(_labelTF);
+			if(bg)_labelTF.x = (bg.width-_labelTF.textWidth)*.5;
 		}
 	}
 }

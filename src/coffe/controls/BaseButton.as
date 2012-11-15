@@ -2,21 +2,40 @@ package coffe.controls
 {
 	import coffe.core.UIComponent;
 	
+	import flash.display.DisplayObject;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
 	public class BaseButton extends UIComponent
 	{
 		private var _displacement:Boolean = true;
 		protected var _bgStyle:String;
+		protected var bg:DisplayObject;
+		public var avatar:DisplayObject;
 		public function BaseButton()
 		{
 			super();
+		}
+		
+		override protected function configDefaultStyle():void
+		{
+			_bgStyle = "ImageButtonDefault";
 		}
 		
 		override protected function initEvents():void
 		{
 			addEventListener(MouseEvent.MOUSE_DOWN,onButtonDown);
 			addEventListener(MouseEvent.MOUSE_UP,onMouseUp);
+			addEventListener(Event.ADDED_TO_STAGE,onAddToStage);
+		}
+		
+		protected function onAddToStage(event:Event):void
+		{
+			if(avatar)
+			{
+				removeChild(avatar);
+				avatar = null;
+			}
 		}
 		
 		protected function onMouseUp(event:MouseEvent):void
@@ -51,7 +70,21 @@ package coffe.controls
 		public function set bgStyle(value:String):void
 		{
 			_bgStyle = value;
-			callLater(configUI);
+			configUI();
+		}
+		
+		override protected function configUI():void
+		{
+			var newBg:DisplayObject = getDisplayObjectInstance(_bgStyle);
+			if(newBg)
+			{
+				if(bg)
+				{
+					if(contains(bg))removeChild(bg);
+				}
+				bg = newBg;
+				addChild(bg);
+			}
 		}
 	}
 }
