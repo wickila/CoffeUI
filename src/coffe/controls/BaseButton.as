@@ -1,90 +1,147 @@
 package coffe.controls
 {
+	import coffe.core.InvalidationType;
 	import coffe.core.UIComponent;
+	import coffe.events.ComponentEvent;
 	
-	import flash.display.DisplayObject;
-	import flash.events.Event;
 	import flash.events.MouseEvent;
-	
+	import flash.events.TimerEvent;
+	import flash.text.TextField;
+	import flash.utils.Timer;
+
 	public class BaseButton extends UIComponent
 	{
-		private var _displacement:Boolean = true;
-		protected var _bgStyle:String;
-		protected var bg:DisplayObject;
-		public var avatar:DisplayObject;
+		protected var _labelTF:TextField;
+		protected var _label:String = "Label";
+		protected var _textColor:uint=0;
+		protected var _displacement:Boolean = true;
+		protected var _buttonMode:Boolean = true;
+		protected var _autoRepeat:Boolean = false;
+		protected var pressTimer:Timer;
+		protected var _repeatTime:int = 50;
+		
 		public function BaseButton()
 		{
 			super();
-		}
-		
-		override protected function configDefaultStyle():void
-		{
-			_bgStyle = "ImageButtonDefault";
+			super.buttonMode = _buttonMode;
+			pressTimer = new Timer(_repeatTime,0);
+			pressTimer.addEventListener(TimerEvent.TIMER,onPressTimer,false,0,true);
 		}
 		
 		override protected function initEvents():void
 		{
-			addEventListener(MouseEvent.MOUSE_DOWN,onButtonDown);
-			addEventListener(MouseEvent.MOUSE_UP,onMouseUp);
-			addEventListener(Event.ADDED_TO_STAGE,onAddToStage);
+			super.initEvents();
+			addEventListener(MouseEvent.ROLL_OVER,mouseEventHandler,false,0,true);
+			addEventListener(MouseEvent.MOUSE_DOWN,mouseEventHandler,false,0,true);
+			addEventListener(MouseEvent.MOUSE_UP,mouseEventHandler,false,0,true);
+			addEventListener(MouseEvent.ROLL_OUT,mouseEventHandler,false,0,true);
 		}
 		
-		protected function onAddToStage(event:Event):void
-		{
-			if(avatar)
-			{
-				removeChild(avatar);
-				avatar = null;
+		protected function mouseEventHandler(event:MouseEvent):void {
+			if(event.type == MouseEvent.MOUSE_DOWN) {
+				startPress();
+				buttonDown();
+			} else if (event.type == MouseEvent.ROLL_OVER || event.type == MouseEvent.MOUSE_UP) {
+				endPress();
+			} else if (event.type == MouseEvent.ROLL_OUT){
+				endPress();
 			}
 		}
 		
-		protected function onMouseUp(event:MouseEvent):void
+		private function buttonUp():void
 		{
 			if(_displacement)
 			{
-				x -= 1;
-				y -= 1;
+				x--;y--;
+				stage.removeEventListener(MouseEvent.MOUSE_UP,onStageMouseUp);
 			}
 		}
 		
-		protected function onButtonDown(event:MouseEvent):void
+		private function buttonDown():void
 		{
 			if(_displacement)
 			{
-				x+=1;
-				y+=1;
+				x++;y++;
+				stage.addEventListener(MouseEvent.MOUSE_UP,onStageMouseUp);
 			}
 		}
 		
-		public function get displacement():Boolean
+		protected function onStageMouseUp(event:MouseEvent):void
 		{
-			return _displacement;
+			buttonUp();
 		}
 		
-		[Inspectable(type="Boolean",defaultValue=true)]
+		protected function startPress():void {
+			if (_autoRepeat) {
+				pressTimer.delay = _repeatTime;
+				pressTimer.start();
+			}
+			dispatchEvent(new ComponentEvent(ComponentEvent.BUTTON_DOWN, true));
+		}
+		
+		/**
+		 * @private (protected)
+		 *
+		 * @langversion 3.0
+		 * @playerversion Flash 9.0.28.0
+		 */
+		protected function onPressTimer(event:TimerEvent):void {
+			if (!_autoRepeat) { endPress(); return; }
+			if (pressTimer.currentCount == 1) { pressTimer.delay = _repeatTime; }
+			dispatchEvent(new ComponentEvent(ComponentEvent.BUTTON_DOWN, true));
+		}
+		
+		/**
+		 * @private (protected)
+		 *
+		 * @langversion 3.0
+		 * @playerversion Flash 9.0.28.0
+		 */
+		protected function endPress():void {
+			pressTimer.reset();
+		}
+		
+		public function set label(value:String):void
+		{
+			_label = value;
+			invalidate(InvalidationType.LABEL);
+		}
+		
+		[Inspectable(type="Color",name="文本颜色",defaultValue=0)]
+		public function set textColor(value:uint):void
+		{
+			_textColor = value;
+			if(_labelTF)_labelTF.textColor = value;
+		}
+		
+		[Inspectable(type="Boolean",name="动态位移",defaultValue=true)]
 		public function set displacement(value:Boolean):void
 		{
 			_displacement = value;
 		}
-		[Inspectable(type="String")]
-		public function set bgStyle(value:String):void
+		[Inspectable(type="Boolean",name="手形鼠标",defaultValue=true)]
+		override public function set buttonMode(value:Boolean):void
 		{
-			_bgStyle = value;
-			configUI();
+			_buttonMode = value;
+			super.buttonMode = _buttonMode && enable;
 		}
 		
-		override protected function configUI():void
+		[Inspectable(type="Boolean",name="是否可用",defaultValue=true)]
+		override public function set enable(value:Boolean):void
 		{
-			var newBg:DisplayObject = getDisplayObjectInstance(_bgStyle);
-			if(newBg)
-			{
-				if(bg)
-				{
-					if(contains(bg))removeChild(bg);
-				}
-				bg = newBg;
-				addChild(bg);
-			}
+			super.enable = value;
+			super.buttonMode = _buttonMode && enable;
 		}
+
+		public function get autoRepeat():Boolean
+		{
+			return _autoRepeat;
+		}
+
+		public function set autoRepeat(value:Boolean):void
+		{
+			_autoRepeat = value;
+		}
+
 	}
 }

@@ -1,5 +1,6 @@
 package coffe.controls
 {
+	import coffe.core.InvalidationType;
 	import coffe.core.UIComponent;
 	
 	import flash.display.DisplayObject;
@@ -7,124 +8,141 @@ package coffe.controls
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	
-	public class CheckBox extends UIComponent
+	public class CheckBox extends BaseButton
 	{
-		public var avatar:DisplayObject;
 		protected var _selectedBg:DisplayObject;
 		protected var _unselectedBg:DisplayObject;
-		protected var _selectedBgStyle:String;
-		protected var _unSelectedBgStyle:String;
-		private var _selected:Boolean;
-		private var _textField:TextField;
+		protected var _selectedBgStyle:String="";
+		protected var _unSelectedBgStyle:String="";
+		protected var _selected:Boolean;
 		public function CheckBox()
 		{
 			super();
 		}
 		
+		override protected function initDefaultStyle():void
+		{
+			_selectedBgStyle="CheckBoxSelectOverSkin";
+			_unSelectedBgStyle="CheckBoxUnSelectOverSkin";
+		}
+		
 		override protected function initEvents():void
 		{
-			addEventListener(MouseEvent.MOUSE_DOWN,onButtonDown);
-			addEventListener(MouseEvent.MOUSE_UP,onMouseUp);
-			addEventListener(Event.ADDED_TO_STAGE,onAddToStage);
+			super.initEvents();
+			addEventListener(MouseEvent.CLICK,onMouseClick);
 		}
 		
-		protected function onMouseUp(event:MouseEvent):void
+		protected function onMouseClick(event:MouseEvent):void
 		{
-			
-		}
-		
-		protected function onButtonDown(event:MouseEvent):void
-		{
-			
-		}
-		
-		protected function onAddToStage(event:Event):void
-		{
-			if(avatar)
-			{
-				removeChild(avatar);
-				avatar = null;
-			}
+			selected = !_selected;
+			dispatchEvent(new Event(Event.CHANGE));
 		}
 		
 		public function set unselectedBg(value:DisplayObject):void
 		{
+			if(contains(_unselectedBg))removeChild(_unselectedBg);
 			_unselectedBg = value;
+			if(!_selected)addChild(_unselectedBg);
 		}
 
 		public function set selectedBg(value:DisplayObject):void
 		{
+			if(contains(_selectedBg))removeChild(_selectedBg);
 			_selectedBg = value;
+			if(_selected)addChild(_selectedBg);
 		}
 
-		override protected function configDefaultStyle():void
-		{
-			_selectedBgStyle = "CheckBoxSelectOverSkin";
-			_unSelectedBgStyle = "CheckBoxUnSelectOverSkin";
-		}
-
-		[Inspectable(type="String",defaultValue="CheckBoxSelectOverSkin")]
+		[Inspectable(type="String",name="选中样式",defaultValue="CheckBoxSelectOverSkin")]
 		public function set selectedBgStyle(value:String):void
 		{
 			_selectedBgStyle = value;
-			var temp:DisplayObject = getDisplayObjectInstance(_selectedBgStyle);
-			if(temp)
-			{
-				if(_selectedBg)
-				{
-					if(contains(_selectedBg))removeChild(_selectedBg);
-				}
-				_selectedBg = temp;
-				if(_selected)addChild(_selectedBg);
-			}
-			updateLayout();
+			invalidate(InvalidationType.STYLE);
 		}
 
-		[Inspectable(type="String",defaultValue="CheckBoxUnSelectOverSkin")]
+		[Inspectable(type="String",name="未选中样式",defaultValue="CheckBoxUnSelectOverSkin")]
 		public function set unSelectedBgStyle(value:String):void
 		{
 			_unSelectedBgStyle = value;
-			var temp:DisplayObject = getDisplayObjectInstance(_unSelectedBgStyle);
-			if(temp)
-			{
-				if(_unselectedBg)
-				{
-					if(contains(_unselectedBg))removeChild(_unselectedBg);
-				}
-				_unselectedBg = temp;
-				if(!_selected)addChild(_unselectedBg);
-			}
-			updateLayout();
+			invalidate(InvalidationType.STYLE);
 		}
 
-		[Inspectable(type="String",defaultValue="CheckBox")]
-		public function set label(value:String):void
+		[Inspectable(type="String",name="标签",defaultValue="CheckBox")]
+		override public function set label(value:String):void
 		{
-			_textField.text = value;
-		}
-
-		override protected function configUI():void
-		{
-			_selectedBg = getDisplayObjectInstance(_selectedBgStyle);
-			_unselectedBg = getDisplayObjectInstance(_unSelectedBgStyle);
-			if(_selected)
-			{
-				addChild(_selectedBg);
-			}else
-			{
-				addChild(_unselectedBg);
-			}
-			_textField = new TextField();
-			_textField.selectable = false;
-			_textField.text = "CheckBox";
-			addChild(_textField);
-			updateLayout();
+			super.label = value;
 		}
 		
-		protected function updateLayout():void
+		[Inspectable(type="Boolean",defaultValue=false)]
+		public function set selected(value:Boolean):void
 		{
-			_textField.x = _selectedBg.width+10;
-			_textField.y = (_selectedBg.height-_textField.textHeight)*.5;
+			_selected = value;
+			invalidate(InvalidationType.SELECT);
+		}
+		
+		public function get selected():Boolean
+		{
+			return _selected;
+		}
+
+		override protected function draw():void
+		{
+			if(isInvalid(InvalidationType.STYLE))
+			{
+				drawSelectBackground();
+				drawUnselectBackground();
+			}
+			if(isInvalid(InvalidationType.SELECT))
+			{
+				if(_selected)
+				{
+					if(contains(_unselectedBg))removeChild(_unselectedBg);
+					addChild(_selectedBg);
+				}else{
+					if(contains(_selectedBg))removeChild(_selectedBg);
+					addChild(_unselectedBg);
+				}
+			}
+			if(!_labelTF)
+			{
+				_labelTF = new TextField();
+				_labelTF.selectable = _labelTF.mouseEnabled = false;
+				addChild(_labelTF);
+			}
+			_labelTF.text = _label;
+			if(isInvalid(InvalidationType.LABEL,InvalidationType.STYLE))
+			{
+				drawLayout();
+			}
+			validate();
+		}
+		
+		private function drawUnselectBackground():void
+		{
+			var us:DisplayObject = getDisplayObjectInstance(_unSelectedBgStyle);
+			if(us)
+			{
+				if(_unselectedBg&&contains(_unselectedBg))removeChild(_unselectedBg);
+				_unselectedBg = us;
+				if(!_selected)addChild(_unselectedBg);
+			}
+		}
+		
+		private function drawSelectBackground():void
+		{
+			var s:DisplayObject = getDisplayObjectInstance(_selectedBgStyle);
+			if(s)
+			{
+				if(_selectedBg&&contains(_selectedBg))removeChild(_selectedBg);
+				_selectedBg = s;
+				if(_selected)addChild(_selectedBg);
+			}
+		}
+		
+		override public function drawLayout():void
+		{
+			_labelTF.x = _selectedBg.width+10;
+			_labelTF.y = (_selectedBg.height-_labelTF.textHeight)*.5;
+			_labelTF.height = _labelTF.textHeight+10;
 		}
 	}
 }
