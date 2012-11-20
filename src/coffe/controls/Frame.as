@@ -11,7 +11,11 @@ package coffe.controls
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	import flash.ui.Keyboard;
-	
+	/**
+	 *	弹出框 
+	 * @author wicki
+	 * 
+	 */	
 	public class Frame extends UIComponent
 	{
 		public static const DEFAULT_STYLE:Object = {
@@ -24,6 +28,7 @@ package coffe.controls
 		private var _contentTop:int = 50;
 		private var _contentBottom:int = 30;
 		private var _contentSide:int = 20;
+		private var _buttonToBottom:int = 10;
 		
 		private var _backgroundStyle:String;
 		private var _closeStyle:String;
@@ -55,6 +60,16 @@ package coffe.controls
 		{
 			super.initEvents();
 			addEventListener(Event.ADDED_TO_STAGE,onAddToStage);
+		}
+		
+		override protected function removeEvents():void
+		{
+			super.removeEvents();
+			if(_cancelBtn)_cancelBtn.removeEventListener(MouseEvent.CLICK,onBtnClick);
+			if(_okBtn)_okBtn.removeEventListener(MouseEvent.CLICK,onBtnClick);
+			if(_closeBtn)_closeBtn.removeEventListener(MouseEvent.CLICK,onBtnClick);
+			removeEventListener(Event.ADDED_TO_STAGE,onAddToStage);
+			removeEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
 		}
 		
 		protected function onAddToStage(event:Event):void
@@ -234,6 +249,7 @@ package coffe.controls
 			_cancelLabel = value;
 			invalidate(InvalidationType.STATE);
 		}
+		
 		[Inspectable(type="String")]
 		public function set okLabel(value:String):void
 		{
@@ -247,20 +263,6 @@ package coffe.controls
 			if(_title == value)return;
 			_title = value;
 			invalidate(InvalidationType.STATE);
-		}
-		
-		override public function get width():Number
-		{
-			if(!isNaN(_width))return _width;
-			if(_background)return _background.width;
-			return super.width;
-		}
-		
-		override public function get height():Number
-		{
-			if(!isNaN(_height))return _height;
-			if(_background)return _background.height;
-			return super.height;
 		}
 		
 		public function setContent(content:DisplayObject,adaptive:Boolean = true):void
@@ -278,5 +280,42 @@ package coffe.controls
 			if(_cancelBtn)result+=_cancelBtn.width;
 			return result;
 		}
+		
+		override public function dispose():void
+		{
+			super.dispose();
+			if(_background && contains(_background))removeChild(_background);_background = null;
+			if(_closeBtn)_closeBtn.dispose();_closeBtn = null;
+			if(_okBtn)_okBtn.dispose();_okBtn = null;
+			if(_cancelBtn)_cancelBtn.dispose();_cancelBtn = null;
+			if(_titleTF&&contains(_titleTF))removeChild(_titleTF);_titleTF = null;
+			if(_content&&contains(_content))removeChild(_content);_content = null;
+		}
+		[Inspectable(type="Number",defaultValue=50)]	
+		public function set contentTop(value:int):void
+		{
+			_contentTop = value;
+		}
+		[Inspectable(type="Number",defaultValue=30)]	
+		public function set contentBottom(value:int):void
+		{
+			_contentBottom = value;
+		}
+		[Inspectable(type="Number",defaultValue=20)]		
+		public function set contentSide(value:int):void
+		{
+			_contentSide = value;
+		}
+
+		/**
+		 *	底部按钮距离底部的距离 
+		 */
+		[Inspectable(type="Number",defaultValue=10)]	
+		public function set buttonToBottom(value:int):void
+		{
+			_buttonToBottom = value;
+		}
+
+
 	}
 }

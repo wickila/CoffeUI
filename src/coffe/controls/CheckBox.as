@@ -31,6 +31,12 @@ package coffe.controls
 			addEventListener(MouseEvent.CLICK,onMouseClick);
 		}
 		
+		override protected function removeEvents():void
+		{
+			super.removeEvents();
+			removeEventListener(MouseEvent.CLICK,onMouseClick);
+		}
+		
 		protected function onMouseClick(event:MouseEvent):void
 		{
 			selected = !_selected;
@@ -136,6 +142,15 @@ package coffe.controls
 			_labelTF.x = _selectedBg.width+10;
 			_labelTF.y = (_selectedBg.height-_labelTF.textHeight)*.5;
 			_labelTF.height = _labelTF.textHeight+10;
+		}
+		
+		override public function dispose():void
+		{
+			super.dispose();
+			if(_selectedBg&&contains(_selectedBg))removeChild(_selectedBg);
+			_selectedBg = null;
+			if(_unselectedBg&&contains(_unselectedBg))removeChild(_unselectedBg);
+			_unselectedBg = null;
 		}
 	}
 }

@@ -67,6 +67,12 @@ package coffe.controls
 		{
 			_value = value;
 		}
+		
+		override public function dispose():void
+		{
+			if (_group != null)_group.removeRadioButton(this);
+			super.dispose();
+		}
 
 	}
 }

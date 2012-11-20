@@ -15,7 +15,11 @@ package coffe.controls
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-	
+	/**
+	 *	列表 
+	 * @author wicki
+	 * 
+	 */	
 	public class List extends ScrollPane
 	{
 		public static const DEFAULT_STYLE:Object = {
@@ -28,11 +32,11 @@ package coffe.controls
 		private var _data:DataProvider;
 		private var _gap:int=2;
 		private var _cellHeight:Number;
-		private var _selected:ICellRender;
 		private var _selectedData:Object;
 		private var _labelField:String;
 		private var _align:String = AlignType.CENTER;
 		private var _simpleCollectionImport:SimpleCollectionItem;
+		private var _cellRenderImport:CellRender;
 		
 		public function List()
 		{
@@ -47,6 +51,16 @@ package coffe.controls
 			super.initDefaultStyle();
 		}
 		
+		override protected function removeEvents():void
+		{
+			super.removeEvents();
+			if(_data)_data.removeEventListener(DataChangeEvent.DATA_CHANGE,onDataChange);
+			for each(var cell:ICellRender in _cells)
+			{
+				cell.removeEventListener(MouseEvent.CLICK,onCellClick);
+			}
+		}
+		
 		override protected function draw():void
 		{
 			super.drawComponents();
@@ -57,7 +71,10 @@ package coffe.controls
 			}
 			if(isInvalid(InvalidationType.DATA,InvalidationType.CELL_RENDER))
 			{
-				while(_cells.length>0){_cells.pop().dispose();}
+				if(isInvalid(InvalidationType.CELL_RENDER))
+				{
+					while(_cells.length>0){var cell:ICellRender=_cells.pop();cell.removeEventListener(MouseEvent.CLICK,onCellClick);cell.dispose();}
+				}
 				createCells();
 				updateScrollBar();
 				updateScrollRect();
@@ -83,7 +100,7 @@ package coffe.controls
 			renderCells();
 		}
 		/**
-		 * @description 滚动时，渲染出需要显示出来的数据，其他不需要显示出来的数据就不会显示出来
+		 * 滚动时，渲染出需要显示出来的数据，其他不需要显示出来的数据就不会被渲染出来
 		 * 
 		 */		
 		private function renderCells():void
@@ -156,14 +173,14 @@ package coffe.controls
 				_data.removeEventListener(DataChangeEvent.DATA_CHANGE,onDataChange);
 			}
 			_data = value;
+			if(_data == null)_data = new DataProvider();
 			_data.addEventListener(DataChangeEvent.DATA_CHANGE,onDataChange);
 			invalidate(InvalidationType.DATA);
 		}
 		
 		private function onDataChange(event:DataChangeEvent):void
 		{
-			updateScrollBar();
-			updateScrollRect();
+			invalidate(InvalidationType.DATA);
 		}
 		
 		public function get selectedData():Object
@@ -199,6 +216,18 @@ package coffe.controls
 		{
 			_align = value;
 			invalidate(InvalidationType.SIZE);
+		}
+		
+		override public function dispose():void
+		{
+			super.dispose();
+			while(_cells.length>0)
+			{
+				_cells.pop().dispose();
+			}
+			_cells = null;
+			_selectedData = null;
+			if(_data)_data.removeAll();_data = null;
 		}
 	}
 }

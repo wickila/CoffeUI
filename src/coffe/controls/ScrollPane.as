@@ -42,6 +42,15 @@ package coffe.controls
 			addEventListener(MouseEvent.MOUSE_WHEEL,onMouseWheel);
 		}
 		
+		override protected function removeEvents():void
+		{
+			if(_vScrollBar)_vScrollBar.removeEventListener(ScrollEvent.SCROLL,onScrollEvent);
+			if(_vScrollBar)_vScrollBar.removeEventListener(MouseEvent.CLICK,onScrollbarClick);
+			if(_hScrollBar)_hScrollBar.removeEventListener(ScrollEvent.SCROLL,onScrollEvent);
+			if(_hScrollBar)_hScrollBar.removeEventListener(MouseEvent.CLICK,onScrollbarClick);
+			removeEventListener(MouseEvent.MOUSE_WHEEL,onMouseWheel);
+		}
+		
 		protected function onMouseWheel(event:MouseEvent):void
 		{
 			if(event.delta>0)
@@ -260,6 +269,20 @@ package coffe.controls
 		protected function get hScrollHeight():Number
 		{
 			return _hScrollBar.visible?_hScrollBar.height:0;
+		}
+		
+		override public function dispose():void
+		{
+			super.dispose();
+			if(_background && contains(_background))removeChild(_background);_background = null;
+			if(_vScrollBar)_vScrollBar.dispose();_vScrollBar = null;
+			if(_hScrollBar)_hScrollBar.dispose();_hScrollBar = null;
+			if(contentClip)
+			{
+				if(contentClip.parent)contentClip.parent.removeChild(contentClip);
+				while(contentClip.numChildren){contentClip.removeChildAt(0)};
+			}
+			if(contentClipWrap&&contains(contentClipWrap))removeChild(contentClip);
 		}
 	}
 }

@@ -215,5 +215,14 @@ package coffe.controls
 			_labelGap = value;
 			invalidate(InvalidationType.LABEL);
 		}
+		
+		override public function dispose():void
+		{
+			super.dispose();
+			if(_background && contains(_background))removeChild(_background);
+			_background = null;
+			if(_icon && contains(_icon))removeChild(_icon);
+			_icon = null;
+		}
 	}
 }

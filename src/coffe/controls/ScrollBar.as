@@ -51,6 +51,13 @@ package coffe.controls
 			setStyle(DEFAULT_STYLE);
 		}
 		
+		override protected function removeEvents():void
+		{
+			if(_upArrow)_upArrow.removeEventListener(ComponentEvent.BUTTON_DOWN,scrollPressHandler);
+			if(_downArrow)_downArrow.removeEventListener(ComponentEvent.BUTTON_DOWN,scrollPressHandler);
+			if(_thumb)_thumb.removeEventListener(MouseEvent.MOUSE_DOWN,thumbPressHandler);
+		}
+		
 		override protected function draw():void
 		{
 			if(isInvalid(InvalidationType.STYLE))
@@ -73,7 +80,6 @@ package coffe.controls
 			{
 				drawLayout();
 			}
-//			validate();
 		}
 		
 		protected function drawComponents():void
@@ -304,6 +310,16 @@ package coffe.controls
 				rotation = 0;
 				setScaleX(1);
 			}
+		}
+		
+		override public function dispose():void
+		{
+			super.dispose();
+			if(_upArrow)_upArrow.dispose();_upArrow = null;
+			if(_downArrow)_downArrow.dispose();_downArrow = null;
+			if(_thumb)_thumb.dispose();_thumb = null;
+			if(_track && contains(_track))removeChild(_track);
+			_track = null;
 		}
 	}
 }

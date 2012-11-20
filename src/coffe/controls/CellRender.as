@@ -10,7 +10,11 @@ package coffe.controls
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
-	
+	/**
+	 * 渲染用的单元格
+	 * @author wicki
+	 * 
+	 */	
 	public class CellRender extends UIComponent implements ICellRender
 	{
 		protected static const DEFAULT_STYLE:Object = {
@@ -40,6 +44,13 @@ package coffe.controls
 			super.initEvents();
 			addEventListener(MouseEvent.ROLL_OVER,onMouseOver);
 			addEventListener(MouseEvent.ROLL_OUT,onMouseOut);
+		}
+		
+		override protected function removeEvents():void
+		{
+			super.removeEvents();
+			removeEventListener(MouseEvent.ROLL_OVER,onMouseOver);
+			removeEventListener(MouseEvent.ROLL_OUT,onMouseOut);
 		}
 		
 		override protected function draw():void
@@ -149,10 +160,11 @@ package coffe.controls
 		
 		override public function dispose():void
 		{
-			removeEventListener(MouseEvent.MOUSE_OVER,onMouseOver);
-			removeEventListener(MouseEvent.MOUSE_OUT,onMouseOut);
-			if(parent)
-				parent.removeChild(this);
+			super.dispose();
+			if(_labelTF && contains(_labelTF))removeChild(_labelTF);
+			_labelTF = null;
+			if(_background && contains(_background))removeChild(_background);
+			_background = null;
 		}
 
 		public function set backgroundStyle(value:String):void

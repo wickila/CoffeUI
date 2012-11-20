@@ -114,6 +114,12 @@ package coffe.controls
 			_listContainer.addChild(_list);
 		}
 		
+		override protected function removeEvents():void
+		{			
+			if(_list)_list.removeEventListener(ListEvent.SELECTED_DATA_CHANGE,onSelctedDataChange);
+			if(_listContainer)_listContainer.removeEventListener(MouseEvent.CLICK,onListContainerClick);
+		}
+		
 		protected function onSelctedDataChange(event:ListEvent):void
 		{
 			selectedData = _list.selectedData;
@@ -168,6 +174,15 @@ package coffe.controls
 			if(_selectedData == value)return;
 			_selectedData = value;
 			invalidate(InvalidationType.LABEL);
+		}
+		
+		override public function dispose():void
+		{
+			super.dispose();
+			if(_data)_data.removeAll();_data = null;
+			if(_list)_list.dispose();_list = null;
+			if(_listContainer&&contains(_listContainer))removeChild(_listContainer);_list = null;
+			if(_button)_button.dispose();_button = null;
 		}
 	}
 }

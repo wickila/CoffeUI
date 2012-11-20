@@ -167,6 +167,12 @@ package coffe.controls
 		{
 			_autoRepeat = value;
 		}
-
+		
+		override public function dispose():void
+		{
+			super.dispose();
+			if(_labelTF && contains(_labelTF))removeChild(_labelTF);
+			_labelTF = null;
+		}
 	}
 }
