@@ -14,7 +14,6 @@ package coffe.controls
 		protected var _unselectedBg:DisplayObject;
 		protected var _selectedBgStyle:String="";
 		protected var _unSelectedBgStyle:String="";
-		protected var _selected:Boolean;
 		public function CheckBox()
 		{
 			super();
@@ -78,11 +77,6 @@ package coffe.controls
 			_selected = value;
 			invalidate(InvalidationType.SELECT);
 		}
-		
-		public function get selected():Boolean
-		{
-			return _selected;
-		}
 
 		override protected function draw():void
 		{
@@ -113,7 +107,6 @@ package coffe.controls
 			{
 				drawLayout();
 			}
-			validate();
 		}
 		
 		private function drawUnselectBackground():void

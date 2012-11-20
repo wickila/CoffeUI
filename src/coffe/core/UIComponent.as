@@ -11,9 +11,10 @@ package coffe.core
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.filters.ColorMatrixFilter;
-	import flash.filters.GlowFilter;
+	import flash.text.TextField;
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
+	import flash.utils.setTimeout;
 	
 	public class UIComponent extends Sprite
 	{
@@ -22,71 +23,110 @@ package coffe.core
 		private var _enable:Boolean=true;
 		private var inCallLaterPhase:Boolean;
 		private var callLaterMethods:Dictionary;
-		private var invalidHash:Object;
-		protected var isLivePreview:Boolean;
-		protected var _x:Number;
-		protected var _y:Number;
-		protected var startWidth:Number;
-		protected var startHeight:Number;
+		private var _invalidHash:Object;
+		protected var _isLivePreview:Boolean;
+		protected var _width:Number;
+		protected var _height:Number;
+		protected var _scaleX:Number=1;
+		protected var _scaleY:Number=1;
 		
 		public function UIComponent()
 		{
 			super();
 			callLaterMethods = new Dictionary();
-			invalidHash = {};
+			_invalidHash = {};
 			initDefaultStyle();
-			isLivePreview = checkLivePreview();
-			if(!isLivePreview)
-			{
-				while(numChildren>0)
-				{
-					removeChildAt(0);
-				}
-			}
+			_isLivePreview = checkLivePreview();
+			if(!_isLivePreview)removeAllChildren();
 			initEvents();
 			invalidate(InvalidationType.ALL);
 		}
-		
+		/**
+		 * 初始化样式 
+		 * 
+		 */		
 		protected function initDefaultStyle():void
 		{
 			
 		}
-		
+		/**
+		 *	重绘组件 
+		 * 
+		 */		
 		protected function draw():void
 		{
 			drawLayout();
-			validate();
 		}
-			
+		/**
+		 *	重绘组件布局 
+		 * 
+		 */		
 		public function drawLayout():void
 		{
+			
 		}
 		
 		protected function initEvents():void
 		{
-			addEventListener(Event.ADDED_TO_STAGE,onAddToStage);
+			addEventListener(ComponentEvent.CREATION_COMPLETE,onCreationComplete);
 		}
 		
-		protected function onAddToStage(event:Event):void
+		protected function removeEvents():void
 		{
-			removeEventListener(Event.ADDED_TO_STAGE,onAddToStage);
+			removeEventListener(ComponentEvent.CREATION_COMPLETE,onCreationComplete);
 		}
-		
+		/**
+		 *	组件初始化完成，把Flash cs里面的资源尺寸重设
+		 * @param event
+		 * 
+		 */		
+		protected function onCreationComplete(event:Event):void
+		{
+			width = width*super.scaleX;
+			height = height*super.scaleY;
+			super.scaleX = super.scaleY = 1;
+			draw();
+			removeEventListener(ComponentEvent.CREATION_COMPLETE,onCreationComplete);
+		}
+		/**
+		 *	需要的时候，在每个帧周期刷新组件 
+		 * 
+		 */		
+		protected function update():void
+		{
+			draw();
+			var isInit:Boolean = false;
+			if(isInvalid(InvalidationType.ALL))
+				isInit = true;
+			validate();
+			if(isInit)dispatchEvent(new ComponentEvent(ComponentEvent.CREATION_COMPLETE));
+		}
+		/**
+		 *	标记已更新的属性，之后等待更新组件 
+		 * @param property
+		 * 
+		 */		
 		public function invalidate(property:String=InvalidationType.ALL):void {
-			invalidHash[property] = true;
-			callLater(draw);
+			_invalidHash[property] = true;
+			callLater(update);
 		}
-		
+		/**
+		 * 
+		 * @param property
+		 * @param properties
+		 * @return 属性是否被重设过
+		 * 
+		 */		
 		protected function isInvalid(property:String,...properties:Array):Boolean {
-			if (invalidHash[property] || invalidHash[InvalidationType.ALL]) { return true; }
+			if (_invalidHash[property] || _invalidHash[InvalidationType.ALL]) { return true; }
 			while (properties.length > 0) {
-				if (invalidHash[properties.pop()]) { return true; }
+				if (_invalidHash[properties.pop()]) { return true; }
 			}
 			return false
 		}
 		
 		protected function validate():void {
-			invalidHash = {};
+			_invalidHash = {};
 		}
 
 		public function get enable():Boolean
@@ -115,7 +155,7 @@ package coffe.core
 		 */		
 		protected function callLater(fn:Function):void {
 			if(inCallLaterPhase) { return; }
-			if(!isLivePreview)
+			if(!_isLivePreview)
 			{
 				callLaterMethods[fn] = true;
 				if (stage != null) {
@@ -188,7 +228,11 @@ package coffe.core
 			}
 			return instance as DisplayObject;
 		}
-		
+		/**
+		 * 设置组件样式信息
+		 * @param style
+		 * 
+		 */		
 		public function setStyle(style:Object):void
 		{
 			for(var s:String in style)
@@ -196,11 +240,73 @@ package coffe.core
 				this[s] = style[s];
 			}
 		}
-		
+		/**
+		 *	立即重绘组件 
+		 * 
+		 */		
 		public function drawNow():void
 		{
 			draw();
 			delete(callLaterMethods[draw]);
+		}
+		
+		public function setSize(width:Number, height:Number):void {
+			this.width = width;
+			this.height = height;
+			invalidate(InvalidationType.SIZE);
+			dispatchEvent(new ComponentEvent(ComponentEvent.RESIZE, false));
+		}
+		
+		public function move(x:Number,y:Number):void {
+			super.x = Math.round(x);
+			super.y = Math.round(y);
+			dispatchEvent(new ComponentEvent(ComponentEvent.MOVE));
+		}
+		
+		override public function set height(value:Number):void
+		{
+			if(_height == value)return;
+			_height = value;
+			invalidate(InvalidationType.SIZE);
+		}
+		override public function set width(value:Number):void
+		{
+			if(_width == value)return;
+			_width = value;
+			invalidate(InvalidationType.SIZE);
+		}
+		
+		override public function get width():Number{return isNaN(_width)?super.width:_width}
+		
+		override public function get height():Number{return isNaN(_height)?super.height:_height}
+		/**
+		 *	警告:此方法已被重写，只用于预览模式。平时代码中不建议使用，而用setScaleX代替   
+		 * @param value
+		 * 
+		 */		
+		override public function set scaleX(value:Number):void {
+			_scaleX = value;
+			setSize(width*value,height);
+		}
+		/**
+		 *	警告:此方法已被重写，只用于预览模式。平时代码中不建议使用，而用setScaleY代替  
+		 * @param value
+		 * 
+		 */		
+		override public function set scaleY(value:Number):void
+		{
+			_scaleY = value;
+			setSize(width,height*value);
+		}
+		
+		override public function get scaleX():Number
+		{
+			return _scaleX;
+		}
+		
+		override public function get scaleY():Number
+		{
+			return _scaleY;
 		}
 		
 		protected function getScaleY():Number {
@@ -210,6 +316,7 @@ package coffe.core
 		protected function setScaleY(value:Number):void {
 			super.scaleY = value;
 		}
+		
 		protected function getScaleX():Number {
 			return super.scaleX;
 		}
@@ -217,50 +324,11 @@ package coffe.core
 		protected function setScaleX(value:Number):void {
 			super.scaleX = value;
 		}
-		
-		public function setSize(width:Number, height:Number):void {
-			invalidate(InvalidationType.SIZE);
-			dispatchEvent(new ComponentEvent(ComponentEvent.RESIZE, false));
-		}
-		
-		public function move(x:Number,y:Number):void {
-			_x = x;
-			_y = y;
-			super.x = Math.round(x);
-			super.y = Math.round(y);
-			dispatchEvent(new ComponentEvent(ComponentEvent.MOVE));
-		}
-		
-		override public function get x():Number { return ( isNaN(_x) )?super.x:_x; }
-		
-		override public function set x(value:Number):void {
-			move(value,_y);
-		}
-		
-		override public function get y():Number {
-			return ( isNaN(_y) )?super.y:_y;
-		}
-		
-		override public function set y(value:Number):void {
-			move(_x, value);	
-		}
-		
-		override public function get scaleX():Number {
-			return width / startWidth;
-		}
-		
-		override public function set scaleX(value:Number):void {
-			setSize(startWidth*value, height);
-		}
-		
-		override public function get scaleY():Number {
-			return height / startHeight;
-		}
-		
-		override public function set scaleY(value:Number):void {
-			setSize(width, startHeight*value);
-		}
-		
+		/**
+		 * 
+		 * @return 是否处于Flash Cs中的编辑预览模式
+		 * 
+		 */		
 		protected function checkLivePreview():Boolean {
 			if (parent == null) { return false; }
 			var className:String;
@@ -270,8 +338,17 @@ package coffe.core
 			return (className == "fl.livepreview::LivePreviewParent");	
 		}
 		
+		protected function removeAllChildren():void
+		{
+			while(numChildren>0)
+			{
+				removeChildAt(0);
+			}
+		}
+		
 		public function dispose():void
 		{
+			removeEvents();
 			if(parent)
 				parent.removeChild(this);
 		}

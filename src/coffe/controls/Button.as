@@ -7,12 +7,18 @@ package coffe.controls
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
+	import flash.display.FrameLabel;
+	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	import flash.text.TextFieldType;
 	import flash.utils.getDefinitionByName;
-
+	/**
+	 * 普通按钮。包括一个标签文本，一个Icon图标，一个背景。背景支持单张Bitmap，也支持跳帧的Moviclip，如果是Movieclip，可以在里面设置up,over,down的帧标签来实现按钮的状态切换
+	 * @author wicki
+	 * 
+	 */	
 	public class Button extends BaseButton
 	{
 		protected var _backgroundStyle:String="ButtonDefaultSkin";
@@ -21,6 +27,8 @@ package coffe.controls
 		protected var _iconStyle:String;
 		protected var _iconHAlign:String = AlignType.CENTER;
 		protected var _iconVAlign:String = AlignType.MIDDLE;
+		protected var _labelAlign:String = AlignType.CENTER;
+		protected var _labelGap:int = 10;
 		
 		public function Button()
 		{
@@ -47,26 +55,31 @@ package coffe.controls
 			invalidate(InvalidationType.STYLE);
 		}
 		
-		override public function set width(value:Number):void
-		{
-			_background.width = value;
-			invalidate(InvalidationType.SIZE);
-		}
-		
-		override public function set height(value:Number):void
-		{
-			_background.height = value;
-			invalidate(InvalidationType.SIZE);
-		}
-		
 		override public function drawLayout():void
 		{
+			_background.width = width;
+			_background.height = height;
+			if(hasFrameLabel(_mouseState))
+			{
+				_background["gotoAndStop"](_mouseState);
+			}
 			if(_labelTF)
 			{
-				_labelTF.x = (_background.width-_labelTF.textWidth)*.5;
-				_labelTF.x = (_background.width-_labelTF.textWidth)*.5;
-				_labelTF.width = _background.width-_labelTF.x;
+				switch(_labelAlign)
+				{
+					case AlignType.LEFT:
+						_labelTF.x = _labelGap;
+						break;
+					case AlignType.CENTER:
+						_labelTF.x = (_background.width-_labelTF.textWidth)*.5;
+						break;
+					case AlignType.RIGHT:
+						_labelTF.x = _background.width - _labelTF.textWidth - _labelGap;
+						break;
+				}
+				_labelTF.y = (_background.height - _labelTF.textHeight)*.5-2;
 				_labelTF.height = _background.height-_labelTF.y;
+				_labelTF.width = _background.width-_labelTF.x;
 			}
 			if(_icon)
 			{
@@ -97,6 +110,34 @@ package coffe.controls
 			}
 		}
 		
+		override public function get width():Number
+		{
+			if(!isNaN(_width))return _width;
+			if(_background)return _background.width;
+			return super.width;
+		}
+		
+		override public function get height():Number
+		{
+			if(!isNaN(_height))return _height;
+			if(_background)return _background.height;
+			return super.height;
+		}
+		
+		protected function hasFrameLabel(frame:String):Boolean
+		{
+			var mcBg:MovieClip = _background as MovieClip;
+			if(mcBg == null)return false;
+			for each(var l:FrameLabel in mcBg.currentLabels)
+			{
+				if(l.name == frame)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		
 		override protected function draw():void
 		{
 			if(isInvalid(InvalidationType.STYLE))
@@ -108,11 +149,10 @@ package coffe.controls
 			{
 				drawLabel();
 			}
-			if(isInvalid(InvalidationType.SIZE,InvalidationType.LABEL,InvalidationType.STYLE))
+			if(isInvalid(InvalidationType.SIZE,InvalidationType.LABEL,InvalidationType.STYLE,InvalidationType.STATE))
 			{
 				drawLayout();
 			}
-			validate();
 		}
 		
 		private function drawLabel():void
@@ -155,13 +195,25 @@ package coffe.controls
 		public function set iconHAlign(value:String):void
 		{
 			_iconHAlign = value;
+			invalidate(InvalidationType.SIZE);
 		}
 		[Inspectable(defaultValue="middle", name="垂直对齐", type="list", enumeration="left,center,middle")]
 		public function set iconVAlign(value:String):void
 		{
 			_iconVAlign = value;
+			invalidate(InvalidationType.SIZE);
 		}
-
-
+		[Inspectable(defaultValue="center", name="标签对齐", type="list", enumeration="left,center,middle")]
+		public function set labelAlign(value:String):void
+		{
+			_labelAlign = value;
+			invalidate(InvalidationType.LABEL);
+		}
+		[Inspectable(defaultValue=10, name="标签间隔", type="Number")]
+		public function set labelGap(value:int):void
+		{
+			_labelGap = value;
+			invalidate(InvalidationType.LABEL);
+		}
 	}
 }

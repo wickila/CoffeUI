@@ -7,6 +7,7 @@ package coffe.controls
 	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
 	public class ScrollBar extends UIComponent
@@ -54,49 +55,61 @@ package coffe.controls
 		{
 			if(isInvalid(InvalidationType.STYLE))
 			{
-				if(_upArrow)_upArrow.dispose();
-				if(_downArrow)_downArrow.dispose();
-				if(_thumb)_thumb.dispose();
 				if(_track&&contains(_track))removeChild(_track);
 				_track = getDisplayObjectInstance(_trackStyle);
-				if(_track)addChild(_track);
-				_upArrow = new Button();
-				_upArrow.label = "";
+				addChild(_track);
+				drawComponents();
 				_upArrow.backGroundStyle = _upArrowStyle;
-				_upArrow.displacement = false;
-				_upArrow.autoRepeat = true;
-				_upArrow.addEventListener(ComponentEvent.BUTTON_DOWN,scrollPressHandler,false,0,true);
-				addChild(_upArrow);
 				_upArrow.drawNow();
-				_downArrow = new Button();
-				_downArrow.label = "";
+				addChild(_upArrow);
 				_downArrow.backGroundStyle = _downArrowStyle;
-				_downArrow.displacement =false;
-				_downArrow.autoRepeat = true;
-				_downArrow.addEventListener(ComponentEvent.BUTTON_DOWN,scrollPressHandler,false,0,true);
-				addChild(_downArrow);
 				_downArrow.drawNow();
-				_thumb = new Button();
-				_thumb.label = "";
+				addChild(_downArrow);
 				_thumb.backGroundStyle = _thumbStyle;
-				_thumb.iconStyle = _thumbIconStyle;
-				_thumb.displacement = false;
-				_thumb.addEventListener(MouseEvent.MOUSE_DOWN,thumbPressHandler,false,0,true);
-				addChild(_thumb);
 				_thumb.drawNow();
-				_thumb.y = _upArrow.height;
-				_thumb.x = (_track.width-_thumb.width)*.5;
+				addChild(_thumb);
 			}
 			if(isInvalid(InvalidationType.STYLE,InvalidationType.SIZE,InvalidationType.ENABLE))
 			{
 				drawLayout();
 			}
-			validate();
+//			validate();
+		}
+		
+		protected function drawComponents():void
+		{
+			if(_upArrow == null)
+			{
+				_upArrow = new Button();
+				_upArrow.label = "";
+				_upArrow.displacement = false;
+				_upArrow.autoRepeat = true;
+				_upArrow.addEventListener(ComponentEvent.BUTTON_DOWN,scrollPressHandler,false,0,true);
+			}
+			if(_downArrow == null)
+			{
+				_downArrow = new Button();
+				_downArrow.label = "";
+				_downArrow.displacement =false;
+				_downArrow.autoRepeat = true;
+				_downArrow.addEventListener(ComponentEvent.BUTTON_DOWN,scrollPressHandler,false,0,true);
+			}
+			if(_thumb == null)
+			{
+				_thumb = new Button();
+				_thumb.label = "";
+				_thumb.iconStyle = _thumbIconStyle;
+				_thumb.displacement = false;
+				_thumb.addEventListener(MouseEvent.MOUSE_DOWN,thumbPressHandler,false,0,true);
+			}
 		}
 		
 		override public function drawLayout():void
 		{
+			_track.height = direction == ScrollBarDirection.HORIZONTAL?width:height;
 			_downArrow.y = _track.height-_downArrow.height;
+			_thumb.y = _upArrow.height;
+			_thumb.x = (_track.width-_thumb.width)*.5;
 			updateThumb();
 			_thumb.drawLayout();
 		}
@@ -207,7 +220,7 @@ package coffe.controls
 			_scrollPosition = Math.max(_minScrollPosition,Math.min(_maxScrollPosition, newScrollPosition));
 			if (oldPosition == _scrollPosition) { return; }
 			if (fireEvent) { dispatchEvent(new ScrollEvent(_direction, scrollPosition-oldPosition, scrollPosition)); }
-			callLater(updateThumb);
+			invalidate(InvalidationType.SIZE);
 		}
 		
 		protected function updateThumb():void {
@@ -219,26 +232,6 @@ package coffe.controls
 				_thumb.height = Math.max(13,_pageSize / per * (_track.height-_upArrow.height*2));
 				_thumb.y = _track.y+(_track.height-_thumb.height-_upArrow.height*2)*((_scrollPosition-_minScrollPosition)/(_maxScrollPosition-_minScrollPosition))+_upArrow.height;
 				_thumb.visible = enable;
-			}
-		}
-		
-		override public function set height(value:Number):void
-		{
-			if(height == value)return;
-			if(_direction == ScrollBarDirection.VERTICAL)
-			{
-				_track.height = value;
-				invalidate(InvalidationType.SIZE);
-			}
-		}
-		
-		override public function set width(value:Number):void
-		{
-			if(width == value)return;
-			if(_direction == ScrollBarDirection.HORIZONTAL)
-			{
-				_track.height = value;
-				invalidate(InvalidationType.SIZE);
 			}
 		}
 		
@@ -282,30 +275,34 @@ package coffe.controls
 			return _direction;
 		}
 		
+		override protected function onCreationComplete(event:Event):void
+		{
+			width = width*super.scaleX;
+			height = height*super.scaleY;
+			if(_direction == ScrollBarDirection.HORIZONTAL)
+			{
+				setScaleX(-1);
+			}else
+			{
+				setScaleX(1);
+			}
+			draw();
+			removeEventListener(ComponentEvent.CREATION_COMPLETE,onCreationComplete);
+		}
+		
 		[Inspectable(enumeration="horizontal,vertical", name="方向", defaultValue="vertical")]
 		public function set direction(value:String):void
 		{
 			if(_direction == value)return;
 			_direction = value;
-			if(isLivePreview) {
-				if (_direction == ScrollBarDirection.HORIZONTAL) {
-					setScaleX(-1);
-					y = _track.height;
-				} else {
-					setScaleY(1);
-					y = 0;
-				}
+			if(_direction == ScrollBarDirection.HORIZONTAL)
+			{
+				rotation = -90;
+				setScaleX(-1);
 			}else
 			{
-				if(_direction == ScrollBarDirection.HORIZONTAL)
-				{
-					rotation = -90;
-					setScaleX(-1);
-				}else
-				{
-					rotation = 0;
-					setScaleX(1);
-				}
+				rotation = 0;
+				setScaleX(1);
 			}
 		}
 	}

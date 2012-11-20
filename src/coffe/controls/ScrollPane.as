@@ -1,14 +1,15 @@
 package coffe.controls
 {
-	import coffe.DebugSprite;
 	import coffe.core.InvalidationType;
 	import coffe.core.UIComponent;
+	import coffe.events.ComponentEvent;
 	import coffe.events.ScrollEvent;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
+	import flash.text.TextField;
 	
 	public class ScrollPane extends UIComponent
 	{
@@ -16,11 +17,11 @@ package coffe.controls
 			scrollBarStyle:ScrollBar.DEFAULT_STYLE,
 			backgroundStyle:"ScrollPaneBackgroundSkin"
 		};
-		private var _background:DisplayObject;
-		private var _vScrollBar:ScrollBar;
-		private var _hScrollBar:ScrollBar;
-		private var _backgroundStyle:String;
-		private var _scrollBarStyle:Object;
+		protected var _background:DisplayObject;
+		protected var _vScrollBar:ScrollBar;
+		protected var _hScrollBar:ScrollBar;
+		protected var _backgroundStyle:String;
+		protected var _scrollBarStyle:Object;
 		
 		protected var _horizontalScrollPolicy:String=ScrollPolicy.AUTO;
 		protected var _verticalScrollPolicy:String=ScrollPolicy.AUTO;
@@ -33,8 +34,6 @@ package coffe.controls
 			super();
 			contentClipWrap = new Sprite();
 			contentClip = new Sprite();
-			contentClipWrap.addChild(contentClip);
-			addChild(contentClipWrap);
 		}
 		
 		override protected function initEvents():void
@@ -67,23 +66,7 @@ package coffe.controls
 		
 		override protected function draw():void
 		{
-			if(isInvalid(InvalidationType.STYLE))
-			{
-				if(_background && contains(_background))removeChild(_background);
-				if(_vScrollBar){_vScrollBar.removeEventListener(ScrollEvent.SCROLL,onScrollEvent);_vScrollBar.dispose();}
-				if(_hScrollBar){_hScrollBar.removeEventListener(ScrollEvent.SCROLL,onScrollEvent);_hScrollBar.dispose();}
-				_background = getDisplayObjectInstance(_backgroundStyle);
-				if(_background)addChildAt(_background,0);
-				_vScrollBar = new ScrollBar();_vScrollBar.addEventListener(ScrollEvent.SCROLL,onScrollEvent)
-				_hScrollBar = new ScrollBar();_hScrollBar.addEventListener(ScrollEvent.SCROLL,onScrollEvent);
-				_vScrollBar.setStyle(_scrollBarStyle);
-				_hScrollBar.setStyle(_scrollBarStyle);
-				_hScrollBar.direction = ScrollBarDirection.HORIZONTAL;
-				_vScrollBar.drawNow();
-				_hScrollBar.drawNow();
-				addChildAt(_vScrollBar,1);
-				addChildAt(_hScrollBar,2);
-			}
+			drawComponents();
 			if(isInvalid(InvalidationType.STYLE,InvalidationType.SIZE))
 			{
 				drawLayout();
@@ -91,13 +74,57 @@ package coffe.controls
 			}
 		}
 		
-		private function onScrollEvent(event:ScrollEvent):void
+		protected function drawComponents():void
+		{
+			if(isInvalid(InvalidationType.STYLE))
+			{
+				if(_background && contains(_background))removeChild(_background);
+				_background = getDisplayObjectInstance(_backgroundStyle);
+				if(_background)addChildAt(_background,0);
+				if(_vScrollBar == null){_vScrollBar = new ScrollBar();_vScrollBar.addEventListener(ScrollEvent.SCROLL,onScrollEvent);_vScrollBar.addEventListener(MouseEvent.CLICK,onScrollbarClick);}
+				if(_hScrollBar == null){_hScrollBar = new ScrollBar();_hScrollBar.addEventListener(ScrollEvent.SCROLL,onScrollEvent);_hScrollBar.addEventListener(MouseEvent.CLICK,onScrollbarClick);}
+				_vScrollBar.setStyle(_scrollBarStyle);
+				_hScrollBar.setStyle(_scrollBarStyle);
+				_hScrollBar.direction = ScrollBarDirection.HORIZONTAL;
+				_vScrollBar.drawNow();
+				_hScrollBar.drawNow();
+				if(contentClipWrap==null)contentClipWrap = new Sprite();
+				if(contentClip==null)contentClip = new Sprite();
+				contentClipWrap.addChild(contentClip);
+				addChild(contentClipWrap);
+				addChildAt(_vScrollBar,1);
+				addChildAt(_hScrollBar,2);
+			}
+		}
+		
+		override public function get width():Number
+		{
+			if(!isNaN(_width))return _width;
+			if(_background)return _background.width;
+			return super.width;
+		}
+		
+		override public function get height():Number
+		{
+			if(!isNaN(_height))return _height;
+			if(_background)return _background.height;
+			return super.height;
+		}
+		
+		protected function onScrollbarClick(event:MouseEvent):void
+		{
+			event.stopImmediatePropagation();
+		}
+		
+		protected function onScrollEvent(event:ScrollEvent):void
 		{
 			updateScrollRect();
 		}
 		
 		override public function drawLayout():void
 		{
+			_background.width = width;
+			_background.height = height;
 			updateScrollBar();
 		}
 		/**
@@ -106,7 +133,7 @@ package coffe.controls
 		 */		
 		protected function updateScrollBar():void
 		{
-			_hScrollBar.y = _background.height-_hScrollBar.height;
+			_hScrollBar.y = _background.height -_hScrollBar.height;
 			_vScrollBar.x = _background.width - _vScrollBar.width;
 			if(_horizontalScrollPolicy == ScrollPolicy.OFF)
 			{
@@ -121,7 +148,7 @@ package coffe.controls
 			if(_verticalScrollPolicy == ScrollPolicy.OFF)
 			{
 				_vScrollBar.visible = false;
-			}else if(_horizontalScrollPolicy == ScrollPolicy.ON)
+			}else if(_verticalScrollPolicy == ScrollPolicy.ON)
 			{
 				_vScrollBar.visible = true;
 			}else
@@ -141,28 +168,6 @@ package coffe.controls
 		public function set scrollBarStyle(style:Object):void
 		{
 			_scrollBarStyle = style;
-		}
-		
-		override public function set width(value:Number):void
-		{
-			_background.width = value;
-			invalidate(InvalidationType.SIZE);
-		}
-		
-		override public function get width():Number
-		{
-			return _background.width;
-		}
-		
-		override public function set height(value:Number):void
-		{
-			_background.height = value;
-			invalidate(InvalidationType.SIZE);
-		}
-		
-		override public function get height():Number
-		{
-			return _background.height;
 		}
 		
 		[Inspectable(type="String",name="上箭头样式",defaultValue="ScrollBarUpArrowSkin")]
@@ -211,12 +216,14 @@ package coffe.controls
 		public function set horizontalScrollPolicy(value:String):void
 		{
 			_horizontalScrollPolicy = value;
+			invalidate(InvalidationType.SIZE);
 		}
 
 		[Inspectable(defaultValue="auto",name="垂直滚动",enumeration="on,off,auto")]
 		public function set verticalScrollPolicy(value:String):void
 		{
 			_verticalScrollPolicy = value;
+			invalidate(InvalidationType.SIZE);
 		}
 		
 		public function addContent(content:DisplayObject):void

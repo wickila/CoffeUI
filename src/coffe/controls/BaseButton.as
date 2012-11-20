@@ -17,8 +17,10 @@ package coffe.controls
 		protected var _displacement:Boolean = true;
 		protected var _buttonMode:Boolean = true;
 		protected var _autoRepeat:Boolean = false;
+		protected var _mouseState:String="up";
 		protected var pressTimer:Timer;
 		protected var _repeatTime:int = 50;
+		protected var _selected:Boolean;
 		
 		public function BaseButton()
 		{
@@ -37,15 +39,33 @@ package coffe.controls
 			addEventListener(MouseEvent.ROLL_OUT,mouseEventHandler,false,0,true);
 		}
 		
+		override protected function removeEvents():void
+		{
+			super.removeEvents();
+			removeEventListener(MouseEvent.ROLL_OVER,mouseEventHandler);
+			removeEventListener(MouseEvent.MOUSE_DOWN,mouseEventHandler);
+			removeEventListener(MouseEvent.MOUSE_UP,mouseEventHandler);
+			removeEventListener(MouseEvent.ROLL_OUT,mouseEventHandler);
+		}
+		
 		protected function mouseEventHandler(event:MouseEvent):void {
 			if(event.type == MouseEvent.MOUSE_DOWN) {
+				setMouseState("down");
 				startPress();
 				buttonDown();
 			} else if (event.type == MouseEvent.ROLL_OVER || event.type == MouseEvent.MOUSE_UP) {
+				setMouseState("over");
 				endPress();
 			} else if (event.type == MouseEvent.ROLL_OUT){
+				setMouseState("up");
 				endPress();
 			}
+		}
+		
+		public function setMouseState(state:String):void {
+			if (_mouseState == state) { return; }
+			_mouseState = state;
+			invalidate(InvalidationType.STATE);
 		}
 		
 		private function buttonUp():void
@@ -131,6 +151,11 @@ package coffe.controls
 		{
 			super.enable = value;
 			super.buttonMode = _buttonMode && enable;
+		}
+		
+		public function get selected():Boolean
+		{
+			return _selected;
 		}
 
 		public function get autoRepeat():Boolean

@@ -10,6 +10,7 @@ package coffe.events {
 		public static const RESIZE:String = "resize";
 		public static const MOVE:String = "move";
 		public static const ENTER:String = "enter";
+		public static const CREATION_COMPLETE:String="creationComplete";
 		public function ComponentEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false) {
 			super(type, bubbles, cancelable);
 		}

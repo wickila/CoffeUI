@@ -1,10 +1,13 @@
 package coffe.controls
 {
+	import coffe.core.AlignType;
 	import coffe.core.InvalidationType;
 	import coffe.core.UIComponent;
 	import coffe.interfaces.ICellRender;
 	
 	import flash.display.MovieClip;
+	import flash.display.Shape;
+	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	
@@ -21,11 +24,10 @@ package coffe.controls
 		private var _data:Object;
 		private var _selected:Boolean = false;
 		private var _labelField:String;
+		private var _labelAlign:String = AlignType.LEFT;
 		public function CellRender()
 		{
 			super();
-			drawNow();
-			updateBackground();
 		}
 		
 		override protected function initDefaultStyle():void
@@ -36,8 +38,8 @@ package coffe.controls
 		override protected function initEvents():void
 		{
 			super.initEvents();
-			addEventListener(MouseEvent.MOUSE_OVER,onMouseOver);
-			addEventListener(MouseEvent.MOUSE_OUT,onMouseOut);
+			addEventListener(MouseEvent.ROLL_OVER,onMouseOver);
+			addEventListener(MouseEvent.ROLL_OUT,onMouseOut);
 		}
 		
 		override protected function draw():void
@@ -54,39 +56,69 @@ package coffe.controls
 				}
 				addChild(_labelTF);
 			}
-			drawLayout();
+			if(isInvalid(InvalidationType.STATE))
+			{
+				updateBackground();
+			}
+			if(isInvalid(InvalidationType.DATA))
+			{
+				if(_data)
+				{
+					if(_data.hasOwnProperty(_labelField))
+					{
+						_labelTF.text = _data[_labelField];
+					}else
+					{
+						_labelTF.text = _data.toString();
+					}
+				}else
+				{
+					_labelTF.text = "";
+				}
+			}
+			if(isInvalid(InvalidationType.SIZE,InvalidationType.STYLE,InvalidationType.DATA))
+			{
+				drawLayout();
+			}
 		}
 		
 		override public function drawLayout():void
 		{
-			_labelTF.x = (_background.width-_labelTF.textWidth)*.5;
-			_labelTF.x = (_background.width-_labelTF.textWidth)*.5;
-			_labelTF.width = _background.width-_labelTF.x;
+			if(!isNaN(_width))_background.width = _width;
+			if(!isNaN(_height))_background.height = _height;
+			switch(_labelAlign)
+			{
+				case AlignType.LEFT:
+					_labelTF.x = 10;
+					break;
+				case AlignType.CENTER:
+					_labelTF.x = (_background.width-_labelTF.textWidth)*.5;
+					
+					break;
+				case AlignType.RIGHT:
+					_labelTF.x = _background.width - _labelTF.textWidth - 10;
+					break;
+			}
+			_labelTF.width = _background.width - _labelTF.x;
 			_labelTF.height = _background.height-_labelTF.y;
 		}
 		
 		protected function onMouseOut(event:MouseEvent):void
 		{
 			_mouseState = "up";
-			updateBackground();
+			invalidate(InvalidationType.STATE);
 		}
 		
 		protected function onMouseOver(event:MouseEvent):void
 		{
 			_mouseState = "over";
-			updateBackground();
+			invalidate(InvalidationType.STATE);
 		}
 		
 		public function set data(value:Object):void
 		{
 			_data = value;
-			if(_data.hasOwnProperty(_labelField))
-			{
-				_labelTF.text = _data[_labelField];
-			}else
-			{
-				_labelTF.text = _data.toString();
-			}
+			invalidate(InvalidationType.DATA);
 		}
 		
 		public function get data():Object
@@ -97,7 +129,7 @@ package coffe.controls
 		public function set selected(value:Boolean):void
 		{
 			_selected = value;
-			updateBackground();
+			invalidate(InvalidationType.STATE);
 		}
 		
 		public function get selected():Boolean
@@ -123,16 +155,23 @@ package coffe.controls
 				parent.removeChild(this);
 		}
 
-		public function get backgroundStyle():String
-		{
-			return _backgroundStyle;
-		}
-
 		public function set backgroundStyle(value:String):void
 		{
 			if(_backgroundStyle == value)return;
 			_backgroundStyle = value;
 			invalidate(InvalidationType.STYLE);
+		}
+		
+		override public function set width(value:Number):void
+		{
+			_width = value;
+			invalidate(InvalidationType.SIZE);
+		}
+		
+		override public function set height(value:Number):void
+		{
+			_height = value;
+			invalidate(InvalidationType.SIZE);
 		}
 
 		public function get labelField():String
@@ -145,5 +184,15 @@ package coffe.controls
 			_labelField = value;
 		}
 
+		public function get labelAlign():String
+		{
+			return _labelAlign;
+		}
+
+		public function set labelAlign(value:String):void
+		{
+			_labelAlign = value;
+			invalidate(InvalidationType.SIZE);
+		}
 	}
 }
