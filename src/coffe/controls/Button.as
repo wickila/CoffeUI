@@ -167,9 +167,9 @@ package coffe.controls
 				{
 					_labelTF = new TextField();
 					_labelTF.mouseEnabled = _labelTF.selectable = _labelTF.multiline = false;
-					_labelTF.textColor = _textColor;
 					addChild(_labelTF);
 				}
+				_labelTF.textColor = _textColor;
 				_labelTF.text = _label;
 			}else
 			{

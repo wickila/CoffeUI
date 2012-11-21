@@ -109,6 +109,7 @@ package coffe.controls
 				addChild(_labelTF);
 			}
 			_labelTF.text = _label;
+			_labelTF.textColor = _textColor;
 			if(isInvalid(InvalidationType.LABEL,InvalidationType.STYLE))
 			{
 				drawLayout();

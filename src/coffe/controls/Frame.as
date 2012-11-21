@@ -109,7 +109,7 @@ package coffe.controls
 				if(_cancelBtn){_cancelBtn.backGroundStyle = _cancelStyle;_cancelBtn.drawNow();}
 				if(_okBtn){_okBtn.backGroundStyle = _okStyle;_okBtn.drawNow();}
 			}
-			if(isInvalid(InvalidationType.STATE))
+			if(isInvalid(InvalidationType.STATE,InvalidationType.STYLE))
 			{
 				if(_closeBtn){_closeBtn.visible = _showCloseBtn}
 				if(_cancelBtn){_cancelBtn.visible = _showCancelBtn;_cancelBtn.label = _cancelLabel;_cancelBtn.drawNow();}
@@ -127,7 +127,7 @@ package coffe.controls
 					addChild(_content);
 				}
 			}
-			if(isInvalid(InvalidationType.STYLE,InvalidationType.SIZE))
+			if(isInvalid(InvalidationType.STYLE,InvalidationType.STATE,InvalidationType.SIZE))
 			{
 				drawLayout();
 			}
@@ -161,7 +161,7 @@ package coffe.controls
 					_okBtn.x = (_background.width-_okBtn.width)*.5;
 				}
 				_okBtn.y = _background.height - _okBtn.height - 10;
-				_okBtn.visible = true;
+				_okBtn.visible = _showOkBtn;
 			}
 		}
 		
@@ -262,7 +262,7 @@ package coffe.controls
 		{
 			if(_title == value)return;
 			_title = value;
-			invalidate(InvalidationType.STATE);
+			invalidate(InvalidationType.STYLE);
 		}
 		
 		public function setContent(content:DisplayObject,adaptive:Boolean = true):void

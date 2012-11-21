@@ -1,6 +1,8 @@
 package coffe.controls
 {
 	
+	import coffe.core.InvalidationType;
+	
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 
@@ -21,6 +23,20 @@ package coffe.controls
 			_selectedBgStyle = "RadioButtonSelectedUpSkin";
 			_unSelectedBgStyle = "RadioButtonUnSelectedUpSkin";
 			_label = "RadioButton";
+		}
+		
+		[Inspectable(type="String",name="选中样式",defaultValue="RadioButtonSelectedUpSkin")]
+		override public function set selectedBgStyle(value:String):void
+		{
+			_selectedBgStyle = value;
+			invalidate(InvalidationType.STYLE);
+		}
+		
+		[Inspectable(type="String",name="未选中样式",defaultValue="RadioButtonUnSelectedUpSkin")]
+		override public function set unSelectedBgStyle(value:String):void
+		{
+			_unSelectedBgStyle = value;
+			invalidate(InvalidationType.STYLE);
 		}
 		
 		[Inspectable(type="String",name="标签",defaultValue="RadioButton")]
