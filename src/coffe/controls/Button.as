@@ -65,6 +65,10 @@ package coffe.controls
 			}
 			if(_labelTF)
 			{
+				if(_background.width < _labelTF.textWidth-_labelGap*2)
+				{
+					_background.width = _labelTF.textWidth + _labelGap*2;
+				}
 				switch(_labelAlign)
 				{
 					case AlignType.LEFT:
@@ -162,7 +166,7 @@ package coffe.controls
 				if(!_labelTF)
 				{
 					_labelTF = new TextField();
-					_labelTF.mouseEnabled = _labelTF.selectable = false;
+					_labelTF.mouseEnabled = _labelTF.selectable = _labelTF.multiline = false;
 					_labelTF.textColor = _textColor;
 					addChild(_labelTF);
 				}
@@ -191,19 +195,19 @@ package coffe.controls
 			_icon = getDisplayObjectInstance(_iconStyle);
 			if(_icon)addChildAt(_icon,1);
 		}
-		[Inspectable(defaultValue="center", name="水平对齐", type="list", enumeration="left,center,middle")]
+		[Inspectable(defaultValue="center", type="list", enumeration="left,center,right")]
 		public function set iconHAlign(value:String):void
 		{
 			_iconHAlign = value;
 			invalidate(InvalidationType.SIZE);
 		}
-		[Inspectable(defaultValue="middle", name="垂直对齐", type="list", enumeration="left,center,middle")]
+		[Inspectable(defaultValue="middle", type="list", enumeration="top,middle,bottom")]
 		public function set iconVAlign(value:String):void
 		{
 			_iconVAlign = value;
 			invalidate(InvalidationType.SIZE);
 		}
-		[Inspectable(defaultValue="center", name="标签对齐", type="list", enumeration="left,center,middle")]
+		[Inspectable(defaultValue="center", type="list", enumeration="left,center,right")]
 		public function set labelAlign(value:String):void
 		{
 			_labelAlign = value;
