@@ -63,6 +63,6 @@
 2，在库面板中依次右击组件，选择“导出swc文件”，导出到“C:\Users\UserName\AppData\Local\Adobe\Flash CS6\zh_CN\Configuration\Components\CoffeUI”文件夹下，导出的文件名就是组件的名字，例如Button.swc。
 3，在Flash cs中新建一个Actionscript 3.0的fla文件，选择库面板-->重新加载组件。即可在组件面板中见到第二步中导出的组件。
 4，把所有的组件从组件面板中拖拽到库面板中。
-5，保存为coffeui.fla，就完成了一个可用的coffeui.fla的打包啦。
+5，保存到bin文件夹下（注意：千万不能跟代码在同一个文件夹下）,文件名为coffeui.fla，就完成了一个可用的coffeui.fla的打包啦。
 
 如有疑问，请联系gzswicki@gmail.com
