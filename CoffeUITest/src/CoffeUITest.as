@@ -10,7 +10,7 @@ package
 		public function CoffeUITest()
 		{
 			testButton();
-			testFrame();
+//			testFrame();
 		}
 		
 		private function testButton():void
