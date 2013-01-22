@@ -4,13 +4,16 @@ package coffe.events
 	
 	public class FrameEvent extends Event
 	{
+		public static const FRAMEEVENT:String = "frameEvent";
 		public static const CLOSE:String = "close";
 		public static const CANCEL:String = "cancel";
 		public static const OK:String = "ok";
 		
-		public function FrameEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
+		public var code:String;
+		public function FrameEvent(type:String, code:String)
 		{
-			super(type, bubbles, cancelable);
+			this.code = code
+			super(type, false, false);
 		}
 	}
 }

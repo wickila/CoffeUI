@@ -1,21 +1,23 @@
 package coffe.controls
 {
-	import coffe.core.InvalidationType;
-	import coffe.core.UIComponent;
-	import coffe.data.Language;
-	import coffe.events.FrameEvent;
-	
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	import flash.ui.Keyboard;
+	
+	import coffe.core.InvalidationType;
+	import coffe.core.UIComponent;
+	import coffe.data.Language;
+	import coffe.events.FrameEvent;
+
 	/**
 	 *	弹出框 
 	 * @author wicki
 	 * 
 	 */	
+	[Event(name="FrameEvent.FRAMEEVENT", type="coffe.events.FrameEvent")]
 	public class Frame extends UIComponent
 	{
 		public static const DEFAULT_STYLE:Object = {
@@ -84,15 +86,17 @@ package coffe.controls
 			{
 				case Keyboard.ESCAPE:
 					removeEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
-					dispatchEvent(new FrameEvent(FrameEvent.CANCEL));
+					dispatchEvent(new FrameEvent(FrameEvent.FRAMEEVENT,FrameEvent.CLOSE));
+					if(parent)
+						parent.removeChild(this);
 					break;
 				case Keyboard.ENTER:
 					removeEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
-					dispatchEvent(new FrameEvent(FrameEvent.OK));
+					dispatchEvent(new FrameEvent(FrameEvent.FRAMEEVENT,FrameEvent.OK));
+					if(parent)
+						parent.removeChild(this);
 					break;
 			}
-			if(parent)
-				parent.removeChild(this);
 		}
 		
 		override protected function initDefaultStyle():void
@@ -116,14 +120,17 @@ package coffe.controls
 				if(_okBtn){_okBtn.visible = _showOkBtn;_okBtn.label = _okLabel;_okBtn.drawNow();}
 				if(_titleTF)_titleTF.text = _title;
 			}
-			if(isInvalid(InvalidationType.DATA))
+			if(isInvalid(InvalidationType.CONTENT))
 			{
 				if(_content)
 				{
-					width = Math.max(_content.width + _contentSide*2,getMinWidth());
-					height = _content.height + _contentTop + _contentBottom;
-					_content.x = _contentSide;
-					_content.y = _contentTop;
+					if(_adaptive)
+					{
+						width = Math.max(_content.width + _contentSide*2,getMinWidth());
+						height = _content.height + _contentTop + _contentBottom;
+						_content.x = _contentSide;
+						_content.y = _contentTop;
+					}
 					addChild(_content);
 				}
 			}
@@ -178,19 +185,19 @@ package coffe.controls
 		
 		protected function onBtnClick(event:MouseEvent):void
 		{
-			switch(event.target)
+			switch(event.currentTarget)
 			{
 				case _closeBtn:
-					dispatchEvent(new FrameEvent(FrameEvent.CLOSE));
+					dispatchEvent(new FrameEvent(FrameEvent.FRAMEEVENT,FrameEvent.CLOSE));
 					break;
 				case _cancelBtn:
-					dispatchEvent(new FrameEvent(FrameEvent.CANCEL));
+					dispatchEvent(new FrameEvent(FrameEvent.FRAMEEVENT,FrameEvent.CANCEL));
 					break;
 				case _okBtn:
-					dispatchEvent(new FrameEvent(FrameEvent.OK));
+					dispatchEvent(new FrameEvent(FrameEvent.FRAMEEVENT,FrameEvent.OK));
 					break;
 			}
-			stage.removeEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
+			if(stage)stage.removeEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
 			if(parent)parent.removeChild(this);
 		}
 		[Inspectable(type="String",defaultValue="FrameSkin")]
@@ -283,13 +290,14 @@ package coffe.controls
 		
 		override public function dispose():void
 		{
-			super.dispose();
+			if(stage)stage.removeEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
 			if(_background && contains(_background))removeChild(_background);_background = null;
 			if(_closeBtn)_closeBtn.dispose();_closeBtn = null;
 			if(_okBtn)_okBtn.dispose();_okBtn = null;
 			if(_cancelBtn)_cancelBtn.dispose();_cancelBtn = null;
 			if(_titleTF&&contains(_titleTF))removeChild(_titleTF);_titleTF = null;
 			if(_content&&contains(_content))removeChild(_content);_content = null;
+			super.dispose();
 		}
 		[Inspectable(type="Number",defaultValue=50)]	
 		public function set contentTop(value:int):void
