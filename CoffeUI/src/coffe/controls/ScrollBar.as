@@ -1,14 +1,13 @@
 package coffe.controls
 {
+	import flash.display.DisplayObject;
+	import flash.events.Event;
+	import flash.events.MouseEvent;
+	
 	import coffe.core.InvalidationType;
 	import coffe.core.UIComponent;
 	import coffe.events.ComponentEvent;
 	import coffe.events.ScrollEvent;
-	
-	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
-	import flash.events.Event;
-	import flash.events.MouseEvent;
 	
 	public class ScrollBar extends UIComponent
 	{

@@ -1,9 +1,10 @@
 // Copyright 2007. Adobe Systems Incorporated. All Rights Reserved.
 package coffe.controls {
 	
-	import flash.utils.Dictionary;
-	import flash.events.EventDispatcher;
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	
+	import coffe.interfaces.ISelectable;
 	
 	
     //--------------------------------------
@@ -56,7 +57,7 @@ package coffe.controls {
 	 *  @playerversion AIR 1.0
 	 *  @productversion Flash CS3
 	 */
-	public class RadioButtonGroup extends EventDispatcher {
+	public class SelectGroup extends EventDispatcher {
 		
         /**
          * @private
@@ -90,11 +91,11 @@ package coffe.controls {
 		 *  @playerversion AIR 1.0
 		 *  @productversion Flash CS3
 		 */
-		public static function getGroup(name:String):RadioButtonGroup {
+		public static function getGroup(name:String):SelectGroup {
 			if (groups == null) { groups = {}; }
-			var group:RadioButtonGroup = groups[name] as RadioButtonGroup;
+			var group:SelectGroup = groups[name] as SelectGroup;
 			if (group == null) {
-				group = new RadioButtonGroup(name);
+				group = new SelectGroup(name);
 				// every so often, we should clean up old groups:
 				if ((++groupCount)%20 == 0) {
 					cleanUpGroups();
@@ -109,7 +110,7 @@ package coffe.controls {
          * @langversion 3.0
          * @playerversion Flash 9.0.28.0
          */
-		private static function registerGroup(group:RadioButtonGroup):void {
+		private static function registerGroup(group:SelectGroup):void {
 			if(groups == null){groups = {}}
 			groups[group.name] = group;
 		}
@@ -122,7 +123,7 @@ package coffe.controls {
          */
 		private static function cleanUpGroups():void {
 			for (var n:String in groups) {
-				var group:RadioButtonGroup = groups[n] as RadioButtonGroup;
+				var group:SelectGroup = groups[n] as SelectGroup;
 				if (group.radioButtons.length == 0) {
 					delete(groups[n]);
 				}
@@ -151,7 +152,7 @@ package coffe.controls {
          * @langversion 3.0
          * @playerversion Flash 9.0.28.0
          */
-		protected var _selection:RadioButton;
+		protected var _selection:ISelectable;
 
 		// Should be a private constructor, but not allowed in AS3, 
 		// so instead we'll make it work properly if you create a new 
@@ -168,7 +169,7 @@ package coffe.controls {
 		 *  @playerversion AIR 1.0
 		 *  @productversion Flash CS3
 		 */
-		public function RadioButtonGroup(name:String) {
+		public function SelectGroup(name:String) {
 			_name = name;
 			radioButtons = [];
 			registerGroup(this);
@@ -203,7 +204,7 @@ package coffe.controls {
 		 *  @playerversion AIR 1.0
 		 *  @productversion Flash CS3
 		 */
-		public function addRadioButton(radioButton:RadioButton):void {
+		public function addRadioButton(radioButton:ISelectable):void {
 			if (radioButton.groupName != name) {
 				radioButton.groupName = name;
 				return;
@@ -223,7 +224,7 @@ package coffe.controls {
 		 *  @playerversion AIR 1.0
 		 *  @productversion Flash CS3
 		 */
-		public function removeRadioButton(radioButton:RadioButton):void {
+		public function removeRadioButton(radioButton:ISelectable):void {
 			var i:int = getRadioButtonIndex(radioButton);
 			if (i != -1) {
 				radioButtons.splice(i, 1);
@@ -243,7 +244,7 @@ package coffe.controls {
 		 *  @playerversion AIR 1.0
 		 *  @productversion Flash CS3
 		 */
-		public function get selection():RadioButton {
+		public function get selection():ISelectable {
 			return _selection;
 		}
 
@@ -253,7 +254,7 @@ package coffe.controls {
          * @langversion 3.0
          * @playerversion Flash 9.0.28.0
 		 */
-		public function set selection(value:RadioButton):void {
+		public function set selection(value:ISelectable):void {
 			if (_selection == value || value == null || getRadioButtonIndex(value) == -1) { return; }
 			_selection = value;
 			dispatchEvent(new Event(Event.CHANGE, true));
@@ -272,7 +273,7 @@ package coffe.controls {
 		 *  @productversion Flash CS3
 		 */
 		public function get selectedData():Object {
-			var s:RadioButton = _selection;
+			var s:ISelectable = _selection;
 			return (s==null) ? null : s.value;
 		}
 
@@ -284,7 +285,7 @@ package coffe.controls {
 		 */
 		public function set selectedData(value:Object):void {
 			for (var i:int = 0; i < radioButtons.length; i++) {
-				var rb:RadioButton = radioButtons[i] as RadioButton;
+				var rb:ISelectable = radioButtons[i] as ISelectable;
 				if (rb.value == value) {
 					selection = rb;
 					return;
@@ -306,9 +307,9 @@ package coffe.controls {
 		 *  @playerversion AIR 1.0
 		 *  @productversion Flash CS3
 		 */
-		public function getRadioButtonIndex(radioButton:RadioButton):int {
+		public function getRadioButtonIndex(radioButton:ISelectable):int {
 			for (var i:int = 0; i < radioButtons.length; i++) {
-				var rb:RadioButton = radioButtons[i] as RadioButton;
+				var rb:ISelectable = radioButtons[i] as ISelectable;
 				if(rb == radioButton) {
 					return i;
 				}
@@ -332,8 +333,8 @@ package coffe.controls {
 		 *  @playerversion AIR 1.0
 		 *  @productversion Flash CS3
 		 */
-		public function getRadioButtonAt(index:int):RadioButton {
-			return RadioButton(radioButtons[index]);
+		public function getRadioButtonAt(index:int):ISelectable {
+			return ISelectable(radioButtons[index]);
 		}
 
 		/**

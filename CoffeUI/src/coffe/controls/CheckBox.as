@@ -1,12 +1,11 @@
 package coffe.controls
 {
-	import coffe.core.InvalidationType;
-	import coffe.core.UIComponent;
-	
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
+	
+	import coffe.core.InvalidationType;
 	
 	public class CheckBox extends BaseButton
 	{
@@ -17,6 +16,7 @@ package coffe.controls
 		public function CheckBox()
 		{
 			super();
+			_labelGap = 10;
 		}
 		
 		override protected function initDefaultStyle():void
@@ -83,6 +83,11 @@ package coffe.controls
 			_selected = value;
 			invalidate(InvalidationType.SELECT);
 		}
+		
+		public function get selected():Boolean
+		{
+			return _selected;
+		}
 
 		override protected function draw():void
 		{
@@ -96,10 +101,10 @@ package coffe.controls
 				if(_selected)
 				{
 					if(contains(_unselectedBg))removeChild(_unselectedBg);
-					addChild(_selectedBg);
+					addChildAt(_selectedBg,0);
 				}else{
 					if(contains(_selectedBg))removeChild(_selectedBg);
-					addChild(_unselectedBg);
+					addChildAt(_unselectedBg,0);
 				}
 			}
 			if(!_labelTF)
@@ -123,7 +128,7 @@ package coffe.controls
 			{
 				if(_unselectedBg&&contains(_unselectedBg))removeChild(_unselectedBg);
 				_unselectedBg = us;
-				if(!_selected)addChild(_unselectedBg);
+				if(!_selected)addChildAt(_unselectedBg,0);
 			}
 		}
 		
@@ -134,14 +139,15 @@ package coffe.controls
 			{
 				if(_selectedBg&&contains(_selectedBg))removeChild(_selectedBg);
 				_selectedBg = s;
-				if(_selected)addChild(_selectedBg);
+				if(_selected)addChildAt(_selectedBg,0);
 			}
 		}
 		
 		override public function drawLayout():void
 		{
-			_labelTF.x = _selectedBg.width+10;
+			_labelTF.x = _selectedBg.width+_labelGap;
 			_labelTF.y = (_selectedBg.height-_labelTF.textHeight)*.5;
+			_labelTF.width = _labelTF.textWidth+10;
 			_labelTF.height = _labelTF.textHeight+10;
 		}
 		

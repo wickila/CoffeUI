@@ -1,13 +1,14 @@
 package coffe.controls
 {
-	import coffe.core.InvalidationType;
-	import coffe.core.UIComponent;
-	import coffe.events.ComponentEvent;
-	
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.text.TextField;
 	import flash.utils.Timer;
+	
+	import coffe.core.AlignType;
+	import coffe.core.InvalidationType;
+	import coffe.core.UIComponent;
+	import coffe.events.ComponentEvent;
 
 	public class BaseButton extends UIComponent
 	{
@@ -21,6 +22,8 @@ package coffe.controls
 		protected var pressTimer:Timer;
 		protected var _repeatTime:int = 50;
 		protected var _selected:Boolean;
+		protected var _labelAlign:String = AlignType.CENTER;
+		protected var _labelGap:int = 10;
 		
 		public function BaseButton()
 		{
@@ -152,10 +155,11 @@ package coffe.controls
 			super.enable = value;
 			super.buttonMode = _buttonMode && enable;
 		}
-		
-		public function get selected():Boolean
+		[Inspectable(defaultValue=10, name="标签间隔", type="Number")]
+		public function set labelGap(value:int):void
 		{
-			return _selected;
+			_labelGap = value;
+			invalidate(InvalidationType.LABEL);
 		}
 
 		public function get autoRepeat():Boolean

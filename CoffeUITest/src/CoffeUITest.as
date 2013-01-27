@@ -10,19 +10,55 @@ package
 	
 	import coffe.controls.Button;
 	import coffe.controls.Frame;
+	import coffe.controls.RadioButton;
+	import coffe.controls.ScrollBar;
+	import coffe.controls.SelectButton;
 	
 	public class CoffeUITest extends Sprite
 	{
 		public function CoffeUITest()
 		{
 			var loader:Loader = new Loader();
-			loader.contentLoaderInfo.addEventListener(Event.COMPLETE,onComplete);
-			loader.load(new URLRequest("coffeuiout.swf"),new LoaderContext(false,ApplicationDomain.currentDomain));
-			function onComplete(event:Event):void
+//			loader.contentLoaderInfo.addEventListener(Event.COMPLETE,onComplete);
+//			loader.load(new URLRequest("coffeuiout.swf"),new LoaderContext(false,ApplicationDomain.currentDomain));
+//			function onComplete(event:Event):void
 			{
-				testButton();
-				testFrame();
+//				testRadioBtn();
+				testSelectBtn();
+//				testButton();
+//				testFrame();
+				testScrollBar();
 			}
+		}
+		
+		private function testScrollBar():void
+		{
+			var scroll:ScrollBar = new ScrollBar();
+			addChild(scroll);
+			scroll.drawNow();
+			scroll.minScrollPosition = 1;
+			scroll.maxScrollPosition = 100;
+			scroll.scrollPosition = 20;
+		}
+		
+		private function testSelectBtn():void
+		{
+			var radio1:SelectButton = new SelectButton();
+			radio1.x = 100;radio1.y = 100;
+			var radio2:SelectButton = new SelectButton();
+			radio2.x = 200;radio2.y = 100;
+			addChild(radio1);
+			addChild(radio2);
+		}
+		
+		private function testRadioBtn():void
+		{
+			var radio1:RadioButton = new RadioButton();
+			radio1.x = 100;radio1.y = 100;radio1.labelGap = -50;
+			var radio2:RadioButton = new RadioButton();
+			radio2.x = 200;radio2.y = 100;radio2.labelGap = -50;
+			addChild(radio1);
+			addChild(radio2);
 		}
 		
 		private function testButton():void

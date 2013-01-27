@@ -27,8 +27,6 @@ package coffe.controls
 		protected var _iconStyle:String;
 		protected var _iconHAlign:String = AlignType.CENTER;
 		protected var _iconVAlign:String = AlignType.MIDDLE;
-		protected var _labelAlign:String = AlignType.CENTER;
-		protected var _labelGap:int = 10;
 		
 		public function Button()
 		{
@@ -211,12 +209,6 @@ package coffe.controls
 		public function set labelAlign(value:String):void
 		{
 			_labelAlign = value;
-			invalidate(InvalidationType.LABEL);
-		}
-		[Inspectable(defaultValue=10, name="标签间隔", type="Number")]
-		public function set labelGap(value:int):void
-		{
-			_labelGap = value;
 			invalidate(InvalidationType.LABEL);
 		}
 		

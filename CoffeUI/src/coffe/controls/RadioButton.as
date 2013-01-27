@@ -1,16 +1,14 @@
 package coffe.controls
 {
 	
-	import coffe.core.InvalidationType;
-	
-	import flash.display.DisplayObject;
 	import flash.events.Event;
+	
+	import coffe.core.InvalidationType;
+	import coffe.interfaces.ISelectable;
 
-	public class RadioButton extends CheckBox
+	public class RadioButton extends CheckBox implements ISelectable
 	{
-		public var RadioButtonAvatar:DisplayObject;
-		
-		protected var _group:RadioButtonGroup;
+		protected var _group:SelectGroup;
 		protected var _value:Object;
 		public function RadioButton()
 		{
@@ -62,7 +60,7 @@ package coffe.controls
 				_group.removeRadioButton(this);
 				_group.removeEventListener(Event.CHANGE,handleChange);
 			}
-			_group = (group == null) ? null : RadioButtonGroup.getGroup(group);
+			_group = (group == null) ? null : SelectGroup.getGroup(group);
 			if (_group != null) {
 				_group.addRadioButton(this);
 				_group.addEventListener(Event.CHANGE,handleChange,false,0,true);
