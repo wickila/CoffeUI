@@ -13,6 +13,7 @@ package
 	import coffe.controls.RadioButton;
 	import coffe.controls.ScrollBar;
 	import coffe.controls.SelectButton;
+	import coffe.events.FrameEvent;
 	
 	public class CoffeUITest extends Sprite
 	{
@@ -24,10 +25,10 @@ package
 //			function onComplete(event:Event):void
 			{
 //				testRadioBtn();
-				testSelectBtn();
+//				testSelectBtn();
 //				testButton();
-//				testFrame();
-				testScrollBar();
+				testFrame();
+//				testScrollBar();
 			}
 		}
 		
@@ -44,6 +45,7 @@ package
 		private function testSelectBtn():void
 		{
 			var radio1:SelectButton = new SelectButton();
+			radio1.selectedFilter = '{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":6,"quality":2,"inner":false,"knockout":false}';
 			radio1.x = 100;radio1.y = 100;
 			var radio2:SelectButton = new SelectButton();
 			radio2.x = 200;radio2.y = 100;
@@ -77,13 +79,18 @@ package
 			frame.title = "提示";
 			frame.move(0,100);
 			var txt:TextField = new TextField();
-			txt.text = "fasdfasdf";
+			txt.text = "fasdfasdf\nasdfasdg\n\n\n\n\n";
 			txt.width = 200;
 			txt.height = txt.textHeight+10;
 			frame.setContent(txt);
 			frame.drawNow();
-			trace(frame.width);
+			frame.addEventListener(FrameEvent.FRAMEEVENT,onFrameEvent);
 			addChild(frame);
+		}
+		
+		protected function onFrameEvent(event:Event):void
+		{
+			event.stopImmediatePropagation();
 		}
 	}
 }

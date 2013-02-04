@@ -3,6 +3,7 @@ package coffe.controls
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.filters.GlowFilter;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
@@ -21,6 +22,8 @@ package coffe.controls
 		protected var _unSelectedLable:String;
 		protected var _selectedFormat:TextFormat;
 		protected var _unSelectedFormat:TextFormat;
+		protected var _selectedFilter:GlowFilter;
+		protected var _unSelectedFilter:GlowFilter;
 		public function SelectButton()
 		{
 			super();
@@ -34,8 +37,9 @@ package coffe.controls
 			_label = "SelectButton";
 			_selectedLable = "Selected";
 			_unSelectedLable = "unSelected";
+			_selectedFilter = _unSelectedFilter = new GlowFilter(0xffffff,1,2,2,5,1);
 			_labelGap = 0;
-			_textColor = 0xffffff;
+			_textColor = 0;
 		}
 		
 		override protected function initEvents():void
@@ -89,14 +93,8 @@ package coffe.controls
 			_labelGap = value;
 			invalidate(InvalidationType.LABEL);
 		}
-		[Inspectable(type="Color",name="文本颜色",defaultValue=0xffffff)]
-		override public function set textColor(value:uint):void
-		{
-			_textColor = value;
-			if(_labelTF)_labelTF.textColor = value;
-		}
 		
-		[Inspectable(type="String",name="选中标签样式",defaultValue='{"color":"0xffffff","font":"Arial","size":11}')]
+		[Inspectable(type="String",name="选中标签样式",defaultValue='{"color":"0x000000","font":"Arial","size":11}')]
 		public function set selectedFormat(value:String):void
 		{
 			try{
@@ -105,11 +103,11 @@ package coffe.controls
 				invalidate(InvalidationType.LABEL);
 			}catch(e:Error)
 			{
-				trace("选中标签格式错误");
+				trace("选中标签格式错误",_selectedFormat);
 			}
 		}
 		
-		[Inspectable(type="String",name="未选中标签样式",defaultValue='{"color":"0xffffff","font":"Arial","size":11}')]
+		[Inspectable(type="String",name="未选中标签样式",defaultValue='{"color":"0x000000","font":"Arial","size":11}')]
 		public function set unSelectedFormat(value:String):void
 		{
 			try{
@@ -118,7 +116,33 @@ package coffe.controls
 				invalidate(InvalidationType.LABEL);
 			}catch(e:Error)
 			{
-				trace("未选中选中标签格式错误");
+				trace("未选中选中标签格式错误",_unSelectedFormat);
+			}
+		}
+		
+		[Inspectable(type="String",name="选中标签滤镜",defaultValue='{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}')]
+		public function set selectedFilter(value:String):void
+		{
+			try{
+				var obj:Object = JSON.parse(value);
+				_selectedFilter = new GlowFilter(parseInt(obj.color),obj.alpha,obj.blurX,obj.blurY,obj.strength,obj.quality,obj.inner,obj.knockout);
+				invalidate(InvalidationType.LABEL);
+			}catch(e:Error)
+			{
+				trace("选中标签滤镜格式错误",_selectedFilter);
+			}
+		}
+		
+		[Inspectable(type="String",name="未选中标签滤镜",defaultValue='{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}')]
+		public function set unSelectedFilter(value:String):void
+		{
+			try{
+				var obj:Object = JSON.parse(value);
+				_unSelectedFilter = new GlowFilter(parseInt(obj.color),obj.alpha,obj.blurX,obj.blurY,obj.strength,obj.quality,obj.inner,obj.knockout);
+				invalidate(InvalidationType.LABEL);
+			}catch(e:Error)
+			{
+				trace("未选中标签滤镜格式错误");
 			}
 		}
 		
@@ -176,7 +200,9 @@ package coffe.controls
 				if(!_labelTF)
 				{
 					_labelTF = new TextField();
+					_labelTF.cacheAsBitmap = true;
 					_labelTF.selectable = _labelTF.mouseEnabled = false;
+					_labelTF.textColor = _textColor;
 					addChild(_labelTF);
 				}
 			}
@@ -186,12 +212,14 @@ package coffe.controls
 				{
 					if(_selectedFormat!=null)_labelTF.defaultTextFormat = _selectedFormat
 					_labelTF.text = _selectedLable;
+					_labelTF.filters = [_selectedFilter];
 					if(_selectedFormat!=null)_labelTF.setTextFormat(_selectedFormat);
 					if(contains(_unselectedBg))removeChild(_unselectedBg);
 					addChildAt(_selectedBg,0);
 				}else{
 					if(_unSelectedFormat!=null)_labelTF.defaultTextFormat = _unSelectedFormat;
 					_labelTF.text = _unSelectedLable;
+					_labelTF.filters = [_unSelectedFilter];
 					if(_unSelectedFormat!=null)_labelTF.setTextFormat(_unSelectedFormat);
 					if(contains(_selectedBg))removeChild(_selectedBg);
 					addChildAt(_unselectedBg,0);

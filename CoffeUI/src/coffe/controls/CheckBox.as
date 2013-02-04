@@ -3,7 +3,9 @@ package coffe.controls
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.filters.GlowFilter;
 	import flash.text.TextField;
+	import flash.text.TextFormat;
 	
 	import coffe.core.InvalidationType;
 	
@@ -23,6 +25,15 @@ package coffe.controls
 		{
 			_selectedBgStyle="CheckBoxSelectOverSkin";
 			_unSelectedBgStyle="CheckBoxUnSelectOverSkin";
+			_labelFormat = '{"color":"0x000000","font":"Arial","size":11}';
+			_labelFitler = '{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}';
+		}
+		
+		[Inspectable(type="String",name="标签滤镜",defaultValue='{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}')]
+		public function set labelFilter(value:String):void
+		{
+			_labelFitler = value;
+			invalidate(InvalidationType.LABEL);
 		}
 		
 		override protected function initEvents():void
@@ -55,6 +66,12 @@ package coffe.controls
 			if(contains(_selectedBg))removeChild(_selectedBg);
 			_selectedBg = value;
 			if(_selected)addChild(_selectedBg);
+		}
+		[Inspectable(type="String",name="标签样式",defaultValue='{"color":"0x000000","font":"Arial","size":11}')]
+		public function set labelFormat(value:String):void
+		{
+			_labelFormat = value;
+			invalidate(InvalidationType.LABEL);
 		}
 
 		[Inspectable(type="String",name="选中样式",defaultValue="CheckBoxSelectOverSkin")]
@@ -111,6 +128,7 @@ package coffe.controls
 			{
 				_labelTF = new TextField();
 				_labelTF.selectable = _labelTF.mouseEnabled = false;
+				_labelTF.cacheAsBitmap = true;
 				addChild(_labelTF);
 			}
 			_labelTF.text = _label;
@@ -149,6 +167,29 @@ package coffe.controls
 			_labelTF.y = (_selectedBg.height-_labelTF.textHeight)*.5;
 			_labelTF.width = _labelTF.textWidth+10;
 			_labelTF.height = _labelTF.textHeight+10;
+			var obj:Object;
+			if(_labelFitler)
+			{
+				try{
+					obj = JSON.parse(_labelFitler);
+					_labelTF.filters = [new GlowFilter(parseInt(obj.color),obj.alpha,obj.blurX,obj.blurY,obj.strength,obj.quality,obj.inner,obj.knockout)];
+				}catch(e:Error)
+				{
+					trace("按钮标签滤镜格式错误",_labelFitler);
+				}
+			}
+			if(_labelFormat)
+			{
+				try{
+					obj = JSON.parse(_labelFormat);
+					var tf:TextFormat = new TextFormat(obj.font,obj.size,obj.color,obj.bold,obj.italic,obj.underline,obj.url,obj.target,obj.align,obj.leftMargin,obj.rightMargin,obj.indent,obj.leading);
+					_labelTF.defaultTextFormat = tf;
+					_labelTF.setTextFormat(tf);
+				}catch(e:Error)
+				{
+					trace("按钮标签样式格式错误",_labelFormat);
+				}
+			}
 		}
 		
 		override public function dispose():void

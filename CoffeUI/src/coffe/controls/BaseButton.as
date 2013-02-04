@@ -13,6 +13,8 @@ package coffe.controls
 	public class BaseButton extends UIComponent
 	{
 		protected var _labelTF:TextField;
+		protected var _labelFitler:String;
+		protected var _labelFormat:String;
 		protected var _label:String = "Label";
 		protected var _textColor:uint=0;
 		protected var _displacement:Boolean = true;

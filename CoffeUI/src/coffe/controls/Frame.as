@@ -17,7 +17,7 @@ package coffe.controls
 	 * @author wicki
 	 * 
 	 */	
-	[Event(name="FrameEvent.FRAMEEVENT", type="coffe.events.FrameEvent")]
+	[Event(name="frameEvent", type="coffe.events.FrameEvent")]
 	public class Frame extends UIComponent
 	{
 		public static const DEFAULT_STYLE:Object = {
@@ -26,6 +26,8 @@ package coffe.controls
 			okStyle:"ButtonDefaultSkin",
 			cancelStyle:"ButtonDefaultSkin"
 		};
+		
+		public var dragEnable:Boolean = true;
 		
 		private var _contentTop:int = 50;
 		private var _contentBottom:int = 30;
@@ -61,7 +63,23 @@ package coffe.controls
 		override protected function initEvents():void
 		{
 			super.initEvents();
+			addEventListener(FrameEvent.FRAMEEVENT,onClose,false,-1);
 			addEventListener(Event.ADDED_TO_STAGE,onAddToStage);
+			addEventListener(MouseEvent.MOUSE_DOWN,onMouseDown);
+			addEventListener(MouseEvent.MOUSE_UP,onMouseUp);
+		}
+		
+		protected function onMouseUp(event:MouseEvent):void
+		{
+			stopDrag();
+		}
+		
+		protected function onMouseDown(event:MouseEvent):void
+		{
+			if(dragEnable&&event.target==_background&&_background.scale9Grid!=null&&event.localY < _background.scale9Grid.y)
+			{
+				startDrag();
+			}
 		}
 		
 		override protected function removeEvents():void
@@ -71,7 +89,10 @@ package coffe.controls
 			if(_okBtn)_okBtn.removeEventListener(MouseEvent.CLICK,onBtnClick);
 			if(_closeBtn)_closeBtn.removeEventListener(MouseEvent.CLICK,onBtnClick);
 			removeEventListener(Event.ADDED_TO_STAGE,onAddToStage);
+			removeEventListener(FrameEvent.FRAMEEVENT,onClose);
 			removeEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
+			removeEventListener(MouseEvent.MOUSE_DOWN,onMouseDown);
+			removeEventListener(MouseEvent.MOUSE_UP,onMouseUp);
 		}
 		
 		protected function onAddToStage(event:Event):void
@@ -85,17 +106,20 @@ package coffe.controls
 			switch(event.keyCode)
 			{
 				case Keyboard.ESCAPE:
-					removeEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
 					dispatchEvent(new FrameEvent(FrameEvent.FRAMEEVENT,FrameEvent.CLOSE));
-					if(parent)
-						parent.removeChild(this);
 					break;
 				case Keyboard.ENTER:
-					removeEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
 					dispatchEvent(new FrameEvent(FrameEvent.FRAMEEVENT,FrameEvent.OK));
-					if(parent)
-						parent.removeChild(this);
 					break;
+			}
+		}
+		
+		protected function onClose(event:FrameEvent):void
+		{
+			if(parent!=null)
+			{
+				removeEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
+				parent.removeChild(this);
 			}
 		}
 		
@@ -197,8 +221,6 @@ package coffe.controls
 					dispatchEvent(new FrameEvent(FrameEvent.FRAMEEVENT,FrameEvent.OK));
 					break;
 			}
-			if(stage)stage.removeEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
-			if(parent)parent.removeChild(this);
 		}
 		[Inspectable(type="String",defaultValue="FrameSkin")]
 		public function set backgroundStyle(value:String):void
@@ -290,7 +312,6 @@ package coffe.controls
 		
 		override public function dispose():void
 		{
-			if(stage)stage.removeEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
 			if(_background && contains(_background))removeChild(_background);_background = null;
 			if(_closeBtn)_closeBtn.dispose();_closeBtn = null;
 			if(_okBtn)_okBtn.dispose();_okBtn = null;

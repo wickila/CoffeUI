@@ -1,19 +1,15 @@
 package coffe.controls
 {
-	import coffe.core.AlignType;
-	import coffe.core.InvalidationType;
-	import coffe.core.UIComponent;
-	
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.FrameLabel;
 	import flash.display.MovieClip;
-	import flash.events.Event;
-	import flash.events.MouseEvent;
+	import flash.filters.GlowFilter;
 	import flash.text.TextField;
-	import flash.text.TextFieldType;
-	import flash.utils.getDefinitionByName;
+	import flash.text.TextFormat;
+	
+	import coffe.core.AlignType;
+	import coffe.core.InvalidationType;
+
 	/**
 	 * 普通按钮。包括一个标签文本，一个Icon图标，一个背景。背景支持单张Bitmap，也支持跳帧的Moviclip，如果是Movieclip，可以在里面设置up,over,down的帧标签来实现按钮的状态切换
 	 * @author wicki
@@ -31,12 +27,28 @@ package coffe.controls
 		public function Button()
 		{
 			super();
+			_labelFitler = '{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}';
+			_labelFormat = '{"color":"0x000000","font":"Arial","size":11}';
 		}
 		
 		[Inspectable(type="String",name="标签",defaultValue="Label")]
 		override public function set label(value:String):void
 		{
 			super.label = value;
+		}
+		
+		[Inspectable(type="String",name="标签滤镜",defaultValue='{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}')]
+		public function set labelFilter(value:String):void
+		{
+			_labelFitler = value;
+			invalidate(InvalidationType.LABEL);
+		}
+		
+		[Inspectable(type="String",name="标签样式",defaultValue='{"color":"0x000000","font":"Arial","size":11}')]
+		public function set labelFormat(value:String):void
+		{
+			_labelFormat = value;
+			invalidate(InvalidationType.LABEL);
 		}
 		
 		[Inspectable(type="String",name="背景样式",defaultValue="ButtonDefaultSkin")]
@@ -165,10 +177,34 @@ package coffe.controls
 				{
 					_labelTF = new TextField();
 					_labelTF.mouseEnabled = _labelTF.selectable = _labelTF.multiline = false;
+					_labelTF.cacheAsBitmap = true;
 					addChild(_labelTF);
 				}
 				_labelTF.textColor = _textColor;
 				_labelTF.text = _label;
+				var obj:Object;
+				if(_labelFitler!="")
+				{
+					try{
+						obj = JSON.parse(_labelFitler);
+						_labelTF.filters = [new GlowFilter(parseInt(obj.color),obj.alpha,obj.blurX,obj.blurY,obj.strength,obj.quality,obj.inner,obj.knockout)];
+					}catch(e:Error)
+					{
+						trace("按钮标签滤镜格式错误",_labelFitler);
+					}
+				}
+				if(_labelFormat!="")
+				{
+					try{
+						obj = JSON.parse(_labelFormat);
+						var tf:TextFormat = new TextFormat(obj.font,obj.size,obj.color,obj.bold,obj.italic,obj.underline,obj.url,obj.target,obj.align,obj.leftMargin,obj.rightMargin,obj.indent,obj.leading);
+						_labelTF.defaultTextFormat = tf;
+						_labelTF.setTextFormat(tf);
+					}catch(e:Error)
+					{
+						trace("按钮标签样式格式错误",_labelFormat);
+					}
+				}
 			}else
 			{
 				if(_labelTF&&contains(_labelTF))removeChild(_labelTF);
