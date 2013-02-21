@@ -1,15 +1,13 @@
 package coffe.controls
 {
+	import flash.display.MovieClip;
+	import flash.events.MouseEvent;
+	import flash.text.TextField;
+	
 	import coffe.core.AlignType;
 	import coffe.core.InvalidationType;
 	import coffe.core.UIComponent;
 	import coffe.interfaces.ICellRender;
-	
-	import flash.display.MovieClip;
-	import flash.display.Shape;
-	import flash.display.Sprite;
-	import flash.events.MouseEvent;
-	import flash.text.TextField;
 	/**
 	 * 渲染用的单元格
 	 * @author wicki
@@ -17,7 +15,7 @@ package coffe.controls
 	 */	
 	public class CellRender extends UIComponent implements ICellRender
 	{
-		protected static const DEFAULT_STYLE:Object = {
+		public static var DEFAULT_STYLE:Object = {
 			backgroundStyle:"CellRenderBackgroundSkin",
 			labelField:"label"
 		};
@@ -104,7 +102,6 @@ package coffe.controls
 					break;
 				case AlignType.CENTER:
 					_labelTF.x = (_background.width-_labelTF.textWidth)*.5;
-					
 					break;
 				case AlignType.RIGHT:
 					_labelTF.x = _background.width - _labelTF.textWidth - 10;
@@ -200,7 +197,7 @@ package coffe.controls
 		{
 			return _labelAlign;
 		}
-
+		
 		public function set labelAlign(value:String):void
 		{
 			_labelAlign = value;

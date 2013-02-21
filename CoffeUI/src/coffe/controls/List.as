@@ -1,20 +1,16 @@
 package coffe.controls
 {
-	import coffe.containers.VGroup;
-	import coffe.core.AlignType;
+	import flash.display.DisplayObject;
+	import flash.events.MouseEvent;
+	
 	import coffe.core.InvalidationType;
 	import coffe.core.UIComponent;
 	import coffe.data.DataChangeEvent;
 	import coffe.data.DataProvider;
 	import coffe.data.SimpleCollectionItem;
-	import coffe.events.ComponentEvent;
 	import coffe.events.ListEvent;
 	import coffe.events.ScrollEvent;
 	import coffe.interfaces.ICellRender;
-	
-	import flash.display.DisplayObject;
-	import flash.display.Sprite;
-	import flash.events.MouseEvent;
 	/**
 	 *	列表 
 	 * @author wicki
@@ -22,7 +18,7 @@ package coffe.controls
 	 */	
 	public class List extends ScrollPane
 	{
-		public static const DEFAULT_STYLE:Object = {
+		public static var DEFAULT_STYLE:Object = {
 			cellRender:"coffe.controls.CellRender",
 			labelField:"label"
 		};
@@ -34,9 +30,9 @@ package coffe.controls
 		private var _cellHeight:Number;
 		private var _selectedData:Object;
 		private var _labelField:String;
-		private var _align:String = AlignType.CENTER;
 		private var _simpleCollectionImport:SimpleCollectionItem;
 		private var _cellRenderImport:CellRender;
+		private var _cellAutoSize:Boolean=true;
 		
 		public function List()
 		{
@@ -121,7 +117,7 @@ package coffe.controls
 					cell.y = index*(_cellHeight+_gap);
 					_cells[i].selected = _selectedData == _cells[i].data;
 					contentClip.addChild(cell);
-					cell.width = width-vScrollWidth;
+					if(_cellAutoSize)cell.width = width-vScrollWidth;
 					if(cell is UIComponent)UIComponent(cell).drawNow();
 					i++;index++;
 					if((cell.y+cell.height)>contentClipWrap.scrollRect.bottom)break;
@@ -210,12 +206,7 @@ package coffe.controls
 		public function set labelField(value:String):void
 		{
 			_labelField = value;
-		}
-
-		public function set align(value:String):void
-		{
-			_align = value;
-			invalidate(InvalidationType.SIZE);
+			invalidate(InvalidationType.CELL_RENDER)
 		}
 		
 		override public function dispose():void
@@ -229,5 +220,34 @@ package coffe.controls
 			_selectedData = null;
 			if(_data)_data.removeAll();_data = null;
 		}
+
+		/**
+		 *	cell的宽度是否根据list的宽度自动调整 
+		 */
+		public function get cellAutoSize():Boolean
+		{
+			return _cellAutoSize;
+		}
+
+		public function set cellAutoSize(value:Boolean):void
+		{
+			_cellAutoSize = value;
+		}
+		/**
+		 *	单元格之间的间隔 
+		 * @return 
+		 * 
+		 */		
+		public function get gap():int
+		{
+			return _gap;
+		}
+
+		public function set gap(value:int):void
+		{
+			_gap = value;
+			invalidate(InvalidationType.SIZE);
+		}
+
 	}
 }

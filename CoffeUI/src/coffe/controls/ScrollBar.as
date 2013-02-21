@@ -11,7 +11,7 @@ package coffe.controls
 	
 	public class ScrollBar extends UIComponent
 	{
-		public static const DEFAULT_STYLE:Object = {
+		public static var DEFAULT_STYLE:Object = {
 			upArrowStyle:"ScrollBarUpArrowSkin",
 			downArrowStyle:"ScrollBarDownArrowSkin",
 			thumbStyle:"ScrollBarThumbSkin",
@@ -127,14 +127,22 @@ package coffe.controls
 			setScrollPosition(_scrollPosition, false);
 			updateThumb();
 		}
-		
+		/**
+		 *	滚动条滚动位置 
+		 * @return 
+		 * 
+		 */		
 		public function get scrollPosition():Number { return _scrollPosition; }
 		
 		
 		public function set scrollPosition(newScrollPosition:Number):void {
 			setScrollPosition(newScrollPosition, true);
 		}
-		
+		/**
+		 *	滚动条最小滚动位置 
+		 * @return 
+		 * 
+		 */		
 		public function get minScrollPosition():Number {
 			return _minScrollPosition;
 		}		
@@ -142,7 +150,11 @@ package coffe.controls
 		public function set minScrollPosition(value:Number):void {
 			setScrollProperties(_pageSize,value,_maxScrollPosition);
 		}
-		
+		/**
+		 *	滚动条最大滚动位置 
+		 * @return 
+		 * 
+		 */		
 		public function get maxScrollPosition():Number {
 			return _maxScrollPosition;
 		}		

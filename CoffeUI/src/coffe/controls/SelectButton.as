@@ -9,9 +9,26 @@ package coffe.controls
 	
 	import coffe.core.InvalidationType;
 	import coffe.interfaces.ISelectable;
-
+	/**
+	 *	可选择按钮，分选中与不选中两种状态 
+	 * @author zs
+	 * 
+	 */
 	public class SelectButton extends BaseButton implements ISelectable
 	{
+		public static var DEFAULT_STYLE:Object = {
+			selectedBgStyle:"SelectButtonSelectSkin",
+			unSelectedBgStyle:"SelectButtonUnSelectSkin",
+			selectedLabel:"Selected",
+			unSelectedLabel:"unSelected",
+			selectedFormat:'{"color":"0x000000","font":"Arial","size":11}',
+			unSelectedFormat:'{"color":"0x000000","font":"Arial","size":11}',
+			selectedFilter:'{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}',
+			unSelectedFilter:'{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}',
+			labelGap:0,
+			textColor:0
+		};
+		
 		protected var _group:SelectGroup;
 		protected var _value:Object;
 		protected var _selectedBgStyle:String;
@@ -32,14 +49,8 @@ package coffe.controls
 		
 		override protected function initDefaultStyle():void
 		{
-			_selectedBgStyle = "SelectButtonSelectSkin";
-			_unSelectedBgStyle = "SelectButtonUnSelectSkin";
 			_label = "SelectButton";
-			_selectedLable = "Selected";
-			_unSelectedLable = "unSelected";
-			_selectedFilter = _unSelectedFilter = new GlowFilter(0xffffff,1,2,2,5,1);
-			_labelGap = 0;
-			_textColor = 0;
+			setStyle(DEFAULT_STYLE);
 		}
 		
 		override protected function initEvents():void
@@ -129,6 +140,7 @@ package coffe.controls
 				invalidate(InvalidationType.LABEL);
 			}catch(e:Error)
 			{
+				_selectedFilter = null;
 				trace("选中标签滤镜格式错误",_selectedFilter);
 			}
 		}
@@ -142,6 +154,7 @@ package coffe.controls
 				invalidate(InvalidationType.LABEL);
 			}catch(e:Error)
 			{
+				_unSelectedFilter = null;
 				trace("未选中标签滤镜格式错误");
 			}
 		}
@@ -153,7 +166,11 @@ package coffe.controls
 			if (_group != null) { _group.selection = this; }
 			else { _selected = value;invalidate(InvalidationType.SELECT);}
 		}
-		
+		/**
+		 *	所属组名 
+		 * @return 
+		 * 
+		 */		
 		public function get groupName():String {
 			return (_group == null) ? null : _group.name;
 		}
@@ -212,20 +229,20 @@ package coffe.controls
 				{
 					if(_selectedFormat!=null)_labelTF.defaultTextFormat = _selectedFormat
 					_labelTF.text = _selectedLable;
-					_labelTF.filters = [_selectedFilter];
+					if(_selectedFilter)_labelTF.filters = [_selectedFilter];
 					if(_selectedFormat!=null)_labelTF.setTextFormat(_selectedFormat);
 					if(contains(_unselectedBg))removeChild(_unselectedBg);
 					addChildAt(_selectedBg,0);
 				}else{
 					if(_unSelectedFormat!=null)_labelTF.defaultTextFormat = _unSelectedFormat;
 					_labelTF.text = _unSelectedLable;
-					_labelTF.filters = [_unSelectedFilter];
+					if(_unSelectedFilter)_labelTF.filters = [_unSelectedFilter];
 					if(_unSelectedFormat!=null)_labelTF.setTextFormat(_unSelectedFormat);
 					if(contains(_selectedBg))removeChild(_selectedBg);
 					addChildAt(_unselectedBg,0);
 				}
 			}
-			if(isInvalid(InvalidationType.LABEL,InvalidationType.SELECT,InvalidationType.STYLE))
+			if(isInvalid(InvalidationType.LABEL,InvalidationType.SELECT,InvalidationType.STYLE,InvalidationType.SIZE))
 			{
 				drawLayout();
 			}
@@ -255,11 +272,27 @@ package coffe.controls
 		
 		override public function drawLayout():void
 		{
+			_selectedBg.width = _unselectedBg.width = width;
+			_selectedBg.height = _unselectedBg.height = height;
 			var bg:DisplayObject = _selected?_selectedBg:_unselectedBg;
 			_labelTF.x = ((bg.width-_labelTF.textWidth)>>1)+_labelGap;
 			_labelTF.y = (bg.height-_labelTF.textHeight)>>1;
 			_labelTF.width = _labelTF.textWidth+10;
 			_labelTF.height = _labelTF.textHeight+10;
+		}
+		
+		override public function get width():Number
+		{
+			if(!isNaN(_width))return _width;
+			if(_selectedBg)return _selectedBg.width;
+			return super.width;
+		}
+		
+		override public function get height():Number
+		{
+			if(!isNaN(_height))return _height;
+			if(_selectedBg)return _selectedBg.height;
+			return super.height;
 		}
 		
 		override public function dispose():void

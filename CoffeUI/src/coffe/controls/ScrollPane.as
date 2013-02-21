@@ -1,19 +1,17 @@
 package coffe.controls
 {
-	import coffe.core.InvalidationType;
-	import coffe.core.UIComponent;
-	import coffe.events.ComponentEvent;
-	import coffe.events.ScrollEvent;
-	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
-	import flash.text.TextField;
+	
+	import coffe.core.InvalidationType;
+	import coffe.core.UIComponent;
+	import coffe.events.ScrollEvent;
 	
 	public class ScrollPane extends UIComponent
 	{
-		public static const DEFAULT_STYLE:Object={
+		public static var DEFAULT_STYLE:Object={
 			scrollBarStyle:ScrollBar.DEFAULT_STYLE,
 			backgroundStyle:"ScrollPaneBackgroundSkin"
 		};
@@ -66,6 +64,20 @@ package coffe.controls
 					_vScrollBar.scrollPosition += _vScrollBar.lineScrollSize;
 				}
 			}
+		}
+		/**
+		 *	垂直方向最大滚动位置 
+		 * @return 
+		 * 
+		 */		
+		public function get vScrollMaxPosition():Number
+		{
+			return _vScrollBar.maxScrollPosition;
+		}
+		
+		public function get hScrollMaxPosition():Number
+		{
+			return _hScrollBar.maxScrollPosition;
 		}
 		
 		override protected function initDefaultStyle():void
@@ -132,8 +144,10 @@ package coffe.controls
 		
 		override public function drawLayout():void
 		{
-			_background.width = width;
-			_background.height = height;
+			if(_background){
+				_background.width = width;
+				_background.height = height;
+			}
 			updateScrollBar();
 		}
 		/**
@@ -142,8 +156,8 @@ package coffe.controls
 		 */		
 		protected function updateScrollBar():void
 		{
-			_hScrollBar.y = _background.height -_hScrollBar.height;
-			_vScrollBar.x = _background.width - _vScrollBar.width;
+			_hScrollBar.y = height -_hScrollBar.height;
+			_vScrollBar.x = width - _vScrollBar.width;
 			if(_horizontalScrollPolicy == ScrollPolicy.OFF)
 			{
 				_hScrollBar.visible = false;
@@ -164,8 +178,8 @@ package coffe.controls
 			{
 				_vScrollBar.visible = height<contentClip.height;
 			}
-			_hScrollBar.width = _background.width - vScrollWidth;
-			_vScrollBar.height = _background.height-hScrollHeight;
+			_hScrollBar.width = width - vScrollWidth;
+			_vScrollBar.height = height-hScrollHeight;
 			_hScrollBar.pageSize = width;
 			_hScrollBar.maxScrollPosition = contentClip.width-width;
 			_vScrollBar.pageSize = height;
@@ -173,10 +187,15 @@ package coffe.controls
 			_hScrollBar.drawNow();
 			_vScrollBar.drawNow();
 		}
-		
+		/**
+		 *	滚动条样式 
+		 * @param style
+		 * 
+		 */		
 		public function set scrollBarStyle(style:Object):void
 		{
 			_scrollBarStyle = style;
+			invalidate(InvalidationType.STYLE);
 		}
 		
 		[Inspectable(type="String",name="上箭头样式",defaultValue="ScrollBarUpArrowSkin")]
@@ -234,7 +253,11 @@ package coffe.controls
 			_verticalScrollPolicy = value;
 			invalidate(InvalidationType.SIZE);
 		}
-		
+		/**
+		 *	添加显示内容 
+		 * @param content
+		 * 
+		 */		
 		public function addContent(content:DisplayObject):void
 		{
 			contentClip.addChild(content);
@@ -248,13 +271,21 @@ package coffe.controls
 		{
 			contentClipWrap.scrollRect = new Rectangle(_hScrollBar.scrollPosition,_vScrollBar.scrollPosition,width-vScrollWidth,height-hScrollHeight);
 		}
-		
+		/**
+		 *	水平滚动位置 
+		 * @param value
+		 * 
+		 */		
 		public function set hScrollPosition(value:Number):void
 		{
 			_hScrollBar.scrollPosition = value;
 			updateScrollRect();
 		}
-		
+		/**
+		 *	垂直滚动位置 
+		 * @param value
+		 * 
+		 */		
 		public function set vScrollPosition(value:Number):void
 		{
 			_vScrollBar.scrollPosition = value;
@@ -282,7 +313,7 @@ package coffe.controls
 				if(contentClip.parent)contentClip.parent.removeChild(contentClip);
 				while(contentClip.numChildren){contentClip.removeChildAt(0)};
 			}
-			if(contentClipWrap&&contains(contentClipWrap))removeChild(contentClip);
+			if(contentClipWrap&&contains(contentClipWrap))removeChild(contentClipWrap);
 		}
 	}
 }

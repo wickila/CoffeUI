@@ -11,6 +11,12 @@ package coffe.controls
 	
 	public class CheckBox extends BaseButton
 	{
+		public static var DEFAULT_STYLE:Object={
+			selectedBgStyle:"CheckBoxSelectOverSkin",
+			unSelectedBgStyle:"CheckBoxUnSelectOverSkin",
+			labelFormat:'{"color":"0x000000","font":"Arial","size":11}',
+			labelFilter:'{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}'
+		};
 		protected var _selectedBg:DisplayObject;
 		protected var _unselectedBg:DisplayObject;
 		protected var _selectedBgStyle:String="";
@@ -23,10 +29,7 @@ package coffe.controls
 		
 		override protected function initDefaultStyle():void
 		{
-			_selectedBgStyle="CheckBoxSelectOverSkin";
-			_unSelectedBgStyle="CheckBoxUnSelectOverSkin";
-			_labelFormat = '{"color":"0x000000","font":"Arial","size":11}';
-			_labelFitler = '{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}';
+			setStyle(DEFAULT_STYLE);
 		}
 		
 		[Inspectable(type="String",name="标签滤镜",defaultValue='{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}')]

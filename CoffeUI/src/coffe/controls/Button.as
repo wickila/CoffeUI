@@ -17,6 +17,12 @@ package coffe.controls
 	 */	
 	public class Button extends BaseButton
 	{
+		public static var DEFAULT_STYLE:Object = {
+			backGroundStyle:"ButtonDefaultSkin",
+			labelFilter:'{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}',
+			labelFormat:'{"color":"0x000000","font":"Arial","size":12}'
+		};
+		
 		protected var _backgroundStyle:String="ButtonDefaultSkin";
 		protected var _background:DisplayObject;
 		protected var _icon:DisplayObject;
@@ -27,8 +33,11 @@ package coffe.controls
 		public function Button()
 		{
 			super();
-			_labelFitler = '{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}';
-			_labelFormat = '{"color":"0x000000","font":"Arial","size":11}';
+		}
+		
+		override protected function initDefaultStyle():void
+		{
+			setStyle(DEFAULT_STYLE);
 		}
 		
 		[Inspectable(type="String",name="标签",defaultValue="Label")]
@@ -44,7 +53,7 @@ package coffe.controls
 			invalidate(InvalidationType.LABEL);
 		}
 		
-		[Inspectable(type="String",name="标签样式",defaultValue='{"color":"0x000000","font":"Arial","size":11}')]
+		[Inspectable(type="String",name="标签样式",defaultValue='{"color":"0x000000","font":"Arial","size":12}')]
 		public function set labelFormat(value:String):void
 		{
 			_labelFormat = value;
@@ -192,12 +201,16 @@ package coffe.controls
 					{
 						trace("按钮标签滤镜格式错误",_labelFitler);
 					}
+				}else
+				{
+					_labelTF.filters = null;
 				}
 				if(_labelFormat!="")
 				{
 					try{
 						obj = JSON.parse(_labelFormat);
 						var tf:TextFormat = new TextFormat(obj.font,obj.size,obj.color,obj.bold,obj.italic,obj.underline,obj.url,obj.target,obj.align,obj.leftMargin,obj.rightMargin,obj.indent,obj.leading);
+						tf.letterSpacing = obj.letterSpacing;tf.kerning=obj.kerning;
 						_labelTF.defaultTextFormat = tf;
 						_labelTF.setTextFormat(tf);
 					}catch(e:Error)

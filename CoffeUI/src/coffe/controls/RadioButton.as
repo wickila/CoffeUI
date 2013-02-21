@@ -8,6 +8,10 @@ package coffe.controls
 
 	public class RadioButton extends CheckBox implements ISelectable
 	{
+		public static var DEFAULT_STYLE:Object={
+			selectedBgStyle:"RadioButtonSelectedUpSkin",
+			unSelectedBgStyle:"RadioButtonUnSelectedUpSkin"
+		}
 		protected var _group:SelectGroup;
 		protected var _value:Object;
 		public function RadioButton()
@@ -18,9 +22,8 @@ package coffe.controls
 		
 		override protected function initDefaultStyle():void
 		{
-			_selectedBgStyle = "RadioButtonSelectedUpSkin";
-			_unSelectedBgStyle = "RadioButtonUnSelectedUpSkin";
 			_label = "RadioButton";
+			setStyle(DEFAULT_STYLE);
 		}
 		
 		[Inspectable(type="String",name="选中样式",defaultValue="RadioButtonSelectedUpSkin")]

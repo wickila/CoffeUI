@@ -10,9 +10,11 @@ package
 	
 	import coffe.controls.Button;
 	import coffe.controls.Frame;
+	import coffe.controls.List;
 	import coffe.controls.RadioButton;
 	import coffe.controls.ScrollBar;
 	import coffe.controls.SelectButton;
+	import coffe.data.DataProvider;
 	import coffe.events.FrameEvent;
 	
 	public class CoffeUITest extends Sprite
@@ -25,11 +27,22 @@ package
 //			function onComplete(event:Event):void
 			{
 //				testRadioBtn();
-//				testSelectBtn();
+				testSelectBtn();
 //				testButton();
-				testFrame();
+//				testFrame();
+//				testList();
 //				testScrollBar();
 			}
+		}
+		
+		private function testList():void
+		{
+			var list:List = new List();
+			var data:DataProvider = new DataProvider([0,1,2,3,4,5,6,7,8,9,10]);
+			list.data = data;
+			list.width=80;
+			data.addItem(11);
+			addChild(list);
 		}
 		
 		private function testScrollBar():void
@@ -49,6 +62,7 @@ package
 			radio1.x = 100;radio1.y = 100;
 			var radio2:SelectButton = new SelectButton();
 			radio2.x = 200;radio2.y = 100;
+			radio1.width = 200;
 			addChild(radio1);
 			addChild(radio2);
 		}
