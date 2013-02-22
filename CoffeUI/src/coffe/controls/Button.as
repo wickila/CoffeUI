@@ -240,7 +240,7 @@ package coffe.controls
 		{
 			if(_icon&&contains(_icon))removeChild(_icon);
 			_icon = getDisplayObjectInstance(_iconStyle);
-			if(_icon)addChildAt(_icon,1);
+			if(_icon&&numChildren>0)addChildAt(_icon,1);
 		}
 		[Inspectable(defaultValue="center", type="list", enumeration="left,center,right")]
 		public function set iconHAlign(value:String):void

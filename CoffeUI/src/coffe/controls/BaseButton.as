@@ -26,6 +26,7 @@ package coffe.controls
 		protected var _selected:Boolean;
 		protected var _labelAlign:String = AlignType.CENTER;
 		protected var _labelGap:int = 10;
+		protected var _labelTopGap:int = 0;
 		
 		public function BaseButton()
 		{
@@ -161,6 +162,13 @@ package coffe.controls
 		public function set labelGap(value:int):void
 		{
 			_labelGap = value;
+			invalidate(InvalidationType.LABEL);
+		}
+		
+		[Inspectable(defaultValue=0, name="标签顶部间隔", type="Number")]
+		public function set labelTopGap(value:int):void
+		{
+			_labelTopGap = value;
 			invalidate(InvalidationType.LABEL);
 		}
 
