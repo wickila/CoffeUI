@@ -248,6 +248,7 @@ package coffe.core
 		{
 			draw();
 			delete(callLaterMethods[draw]);
+			validate();
 		}
 		
 		public function setSize(width:Number, height:Number):void {
