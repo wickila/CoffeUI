@@ -183,6 +183,17 @@ package coffe.controls
 		{
 			return _selectedData;
 		}
+		
+		public function set selectedData(value:Object):void
+		{
+			if(_selectedData == value)return;
+			_selectedData = value;
+			for each(var cell:ICellRender in _cells)
+			{
+				cell.selected = cell.data == _selectedData;
+			}
+			dispatchEvent(new ListEvent(ListEvent.SELECTED_DATA_CHANGE));
+		}
 
 		public function set cellRender(value:String):void
 		{

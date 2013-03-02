@@ -77,6 +77,8 @@ package coffe.controls
 		
 		private var _dragRect:Rectangle;
 		
+		public var autoDispose:Boolean=true;
+		
 		public function Frame()
 		{
 			super();
@@ -147,6 +149,8 @@ package coffe.controls
 			{
 				removeEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
 				parent.removeChild(this);
+				if(autoDispose)
+					dispose();
 			}
 		}
 		
