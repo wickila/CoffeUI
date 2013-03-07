@@ -1,20 +1,18 @@
 package coffe.core
 {
 	
-	import avmplus.getQualifiedClassName;
-	
-	import coffe.events.ComponentEvent;
-	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.filters.ColorMatrixFilter;
-	import flash.text.TextField;
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
-	import flash.utils.setTimeout;
+	
+	import avmplus.getQualifiedClassName;
+	
+	import coffe.events.ComponentEvent;
 	
 	public class UIComponent extends Sprite
 	{
@@ -344,6 +342,14 @@ package coffe.core
 			while(numChildren>0)
 			{
 				removeChildAt(0);
+			}
+		}
+		
+		protected function combinStyle(target:Object,source:Object):void
+		{
+			for(var property:String in source)
+			{
+				target[property] = source[property];
 			}
 		}
 		

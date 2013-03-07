@@ -108,54 +108,66 @@ package coffe.controls
 		[Inspectable(type="String",name="选中标签样式",defaultValue='{"color":"0x000000","font":"Arial","size":11}')]
 		public function set selectedFormat(value:String):void
 		{
-			try{
-				var obj:Object = JSON.parse(value);
-				_selectedFormat = new TextFormat(obj.font,obj.size,obj.color,obj.bold,obj.italic,obj.underline,obj.url,obj.target,obj.align,obj.leftMargin,obj.rightMargin,obj.indent,obj.leading);
-				invalidate(InvalidationType.LABEL);
-			}catch(e:Error)
+			if(value)
 			{
-				trace("选中标签格式错误",_selectedFormat);
+				try{
+					var obj:Object = JSON.parse(value);
+					_selectedFormat = new TextFormat(obj.font,obj.size,obj.color,obj.bold,obj.italic,obj.underline,obj.url,obj.target,obj.align,obj.leftMargin,obj.rightMargin,obj.indent,obj.leading);
+					invalidate(InvalidationType.LABEL);
+				}catch(e:Error)
+				{
+					trace("选中标签格式错误",_selectedFormat);
+				}
 			}
 		}
 		
 		[Inspectable(type="String",name="未选中标签样式",defaultValue='{"color":"0x000000","font":"Arial","size":11}')]
 		public function set unSelectedFormat(value:String):void
 		{
-			try{
-				var obj:Object = JSON.parse(value);
-				_unSelectedFormat = new TextFormat(obj.font,obj.size,obj.color,obj.bold,obj.italic,obj.underline,obj.url,obj.target,obj.align,obj.leftMargin,obj.rightMargin,obj.indent,obj.leading);
-				invalidate(InvalidationType.LABEL);
-			}catch(e:Error)
+			if(value)
 			{
-				trace("未选中选中标签格式错误",_unSelectedFormat);
+				try{
+					var obj:Object = JSON.parse(value);
+					_unSelectedFormat = new TextFormat(obj.font,obj.size,obj.color,obj.bold,obj.italic,obj.underline,obj.url,obj.target,obj.align,obj.leftMargin,obj.rightMargin,obj.indent,obj.leading);
+					invalidate(InvalidationType.LABEL);
+				}catch(e:Error)
+				{
+					trace("未选中选中标签格式错误",_unSelectedFormat);
+				}
 			}
 		}
 		
 		[Inspectable(type="String",name="选中标签滤镜",defaultValue='{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}')]
 		public function set selectedFilter(value:String):void
 		{
-			try{
-				var obj:Object = JSON.parse(value);
-				_selectedFilter = new GlowFilter(parseInt(obj.color),obj.alpha,obj.blurX,obj.blurY,obj.strength,obj.quality,obj.inner,obj.knockout);
-				invalidate(InvalidationType.LABEL);
-			}catch(e:Error)
+			if(value)
 			{
-				_selectedFilter = null;
-				trace("选中标签滤镜格式错误",_selectedFilter);
+				try{
+					var obj:Object = JSON.parse(value);
+					_selectedFilter = new GlowFilter(parseInt(obj.color),obj.alpha,obj.blurX,obj.blurY,obj.strength,obj.quality,obj.inner,obj.knockout);
+					invalidate(InvalidationType.LABEL);
+				}catch(e:Error)
+				{
+					_selectedFilter = null;
+					trace("选中标签滤镜格式错误",_selectedFilter);
+				}
 			}
 		}
 		
 		[Inspectable(type="String",name="未选中标签滤镜",defaultValue='{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}')]
 		public function set unSelectedFilter(value:String):void
 		{
-			try{
-				var obj:Object = JSON.parse(value);
-				_unSelectedFilter = new GlowFilter(parseInt(obj.color),obj.alpha,obj.blurX,obj.blurY,obj.strength,obj.quality,obj.inner,obj.knockout);
-				invalidate(InvalidationType.LABEL);
-			}catch(e:Error)
+			if(value)
 			{
-				_unSelectedFilter = null;
-				trace("未选中标签滤镜格式错误");
+				try{
+					var obj:Object = JSON.parse(value);
+					_unSelectedFilter = new GlowFilter(parseInt(obj.color),obj.alpha,obj.blurX,obj.blurY,obj.strength,obj.quality,obj.inner,obj.knockout);
+					invalidate(InvalidationType.LABEL);
+				}catch(e:Error)
+				{
+					_unSelectedFilter = null;
+					trace("未选中标签滤镜格式错误");
+				}
 			}
 		}
 		

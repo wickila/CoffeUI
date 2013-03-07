@@ -192,7 +192,7 @@ package coffe.controls
 				_labelTF.textColor = _textColor;
 				_labelTF.text = _label;
 				var obj:Object;
-				if(_labelFitler!="")
+				if(_labelFitler)
 				{
 					try{
 						obj = JSON.parse(_labelFitler);
@@ -205,7 +205,7 @@ package coffe.controls
 				{
 					_labelTF.filters = null;
 				}
-				if(_labelFormat!="")
+				if(_labelFormat)
 				{
 					try{
 						obj = JSON.parse(_labelFormat);

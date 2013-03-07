@@ -1,24 +1,25 @@
 package coffe.controls
 {
+	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.MouseEvent;
+	import flash.geom.Point;
+	
 	import coffe.core.AlignType;
 	import coffe.core.InvalidationType;
 	import coffe.core.UIComponent;
 	import coffe.data.DataProvider;
 	import coffe.events.ListEvent;
 	
-	import flash.display.Sprite;
-	import flash.events.Event;
-	import flash.events.MouseEvent;
-	import flash.geom.Point;
-	
 	public class ComboBox extends UIComponent
 	{
 		public static const DEFAULT_STYLE:Object = {
-			backgroundStyle:"ComboBoxSkin",
-			listStyle:List.DEFAULT_STYLE
+			listStyle:List.DEFAULT_STYLE,
+			buttonBackgroundStyle:"ComboBoxSkin"
 		}
-		private var _backgroundStyle:String;
-		private var _listStyle:Object;
+		private var _listStyle:Object={};
+		private var _buttonStyle:Object = {};
+		private var _listHeight:int=100;
 		private var _button:Button;
 		private var _list:List;
 		private var _data:DataProvider;
@@ -47,12 +48,12 @@ package coffe.controls
 					_button.labelAlign = AlignType.LEFT;
 					_button.addEventListener(MouseEvent.CLICK,onClick,false,int.MAX_VALUE);
 				}
-				_button.backGroundStyle = "ComboBoxSkin";
+				_button.setStyle(_buttonStyle);
 				_button.drawNow();
 				addChild(_button);
 				if(_list)
 				{
-					_list.setStyle(DEFAULT_STYLE.listStyle);
+					_list.setStyle(_listStyle);
 					_list.drawNow();
 				}
 			}
@@ -107,9 +108,10 @@ package coffe.controls
 		protected function createList():void
 		{
 			_list = new List();
-			_list.setStyle(DEFAULT_STYLE.listStyle);
+			_list.setStyle(_listStyle);
 			_list.addEventListener(ListEvent.SELECTED_DATA_CHANGE,onSelctedDataChange);
 			_list.width = width;
+			_list.height = _listHeight;
 			_listContainer = new Sprite();
 			_listContainer.addChild(_list);
 		}
@@ -154,13 +156,7 @@ package coffe.controls
 
 		public function set listStyle(value:Object):void
 		{
-			_listStyle = value;
-			invalidate(InvalidationType.STYLE);
-		}
-
-		public function set backgroundStyle(value:String):void
-		{
-			_backgroundStyle = value;
+			combinStyle(_listStyle,value);
 			invalidate(InvalidationType.STYLE);
 		}
 
@@ -174,6 +170,48 @@ package coffe.controls
 			if(_selectedData == value)return;
 			_selectedData = value;
 			invalidate(InvalidationType.LABEL);
+		}
+		
+		[Inspectable(type="String",name="按钮背景样式",defaultValue="ComboBoxSkin")]
+		public function set buttonBackgroundStyle(value:String):void
+		{
+			_buttonStyle.backGroundStyle = value;
+			invalidate(InvalidationType.STYLE);
+		}
+		
+		[Inspectable(type="String",name="按钮标签滤镜",defaultValue='{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}')]
+		public function set labelFilter(value:String):void
+		{
+			_buttonStyle.labelFilter = value;
+			invalidate(InvalidationType.STYLE);
+		}
+		
+		[Inspectable(type="String",name="按钮标签样式",defaultValue='{"color":"0x000000","font":"Arial","size":12}')]
+		public function set labelFormat(value:String):void
+		{
+			_buttonStyle.labelFormat = value;
+			invalidate(InvalidationType.STYLE);
+		} 
+		
+		public function set buttonStyle(value:Object):void
+		{
+			combinStyle(_buttonStyle,value);
+			invalidate(InvalidationType.STYLE);
+		}
+
+		public function get listHeight():int
+		{
+			return _listHeight;
+		}
+
+		[Inspectable(type="Number",name="下拉列表高度",defaultValue='100')]
+		public function set listHeight(value:int):void
+		{
+			_listHeight = value;
+			if(_list!=null)
+			{
+				_list.height = _listHeight;
+			}
 		}
 		
 		override public function dispose():void
