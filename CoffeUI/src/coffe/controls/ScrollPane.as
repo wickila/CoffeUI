@@ -264,6 +264,19 @@ package coffe.controls
 			invalidate(InvalidationType.SIZE);
 		}
 		/**
+		 *	移除显示内容 
+		 * @param content
+		 * 
+		 */		
+		public function removeContent(content:DisplayObject):void
+		{
+			if(contentClip.contains(content))
+			{
+				contentClip.removeChild(content);
+				invalidate(InvalidationType.SIZE);
+			}
+		}
+		/**
 		 *	@description 更新可显示区域 
 		 * 
 		 */		
