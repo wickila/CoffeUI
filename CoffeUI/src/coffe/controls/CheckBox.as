@@ -140,6 +140,16 @@ package coffe.controls
 			{
 				drawLayout();
 			}
+			if(isInvalid(InvalidationType.STATE))
+			{
+				if(_mouseState=="over"||_mouseState=="down")
+				{
+					filters = [LIGHT_FILTER];
+				}else
+				{
+					filters = null;
+				}
+			}
 		}
 		
 		private function drawUnselectBackground():void

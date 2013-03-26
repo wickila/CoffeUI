@@ -17,6 +17,7 @@ package coffe.core
 	public class UIComponent extends Sprite
 	{
 		public static const GRAY_FILTER:ColorMatrixFilter = new ColorMatrixFilter([0.3086, 0.6094, 0.082, 0, 0, 0.3086, 0.6094, 0.082, 0, 0, 0.3086, 0.6094, 0.082, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1]);
+		public static const LIGHT_FILTER:ColorMatrixFilter = new ColorMatrixFilter([1,0,0,0,25,0,1,0,0,25,0,0,1,0,25,0,0,0,1,0]);
 		
 		private var _enable:Boolean=true;
 		private var inCallLaterPhase:Boolean;
