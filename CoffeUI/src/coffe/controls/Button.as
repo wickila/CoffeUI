@@ -83,12 +83,18 @@ package coffe.controls
 				_background["gotoAndStop"](_mouseState);
 			}else
 			{
-				if(_mouseState=="over"||_mouseState=="down")
+				if(enable)
 				{
-					filters = [LIGHT_FILTER];
+					if(_mouseState=="over"||_mouseState=="down")
+					{
+						filters = [LIGHT_FILTER];
+					}else
+					{
+						filters = null;
+					}
 				}else
 				{
-					filters = null;
+					filters = [GRAY_FILTER];
 				}
 			}
 			if(_labelTF)

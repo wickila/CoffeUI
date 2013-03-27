@@ -19,7 +19,7 @@ package coffe.controls
 		protected var _vScrollBar:ScrollBar;
 		protected var _hScrollBar:ScrollBar;
 		protected var _backgroundStyle:String;
-		protected var _scrollBarStyle:Object;
+		protected var _scrollBarStyle:Object={};
 		
 		protected var _horizontalScrollPolicy:String=ScrollPolicy.AUTO;
 		protected var _verticalScrollPolicy:String=ScrollPolicy.AUTO;
@@ -194,7 +194,7 @@ package coffe.controls
 		 */		
 		public function set scrollBarStyle(style:Object):void
 		{
-			_scrollBarStyle = style;
+			combinStyle(_scrollBarStyle,style);
 			invalidate(InvalidationType.STYLE);
 		}
 		
