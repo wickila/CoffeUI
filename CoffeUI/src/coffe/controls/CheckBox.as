@@ -29,6 +29,7 @@ package coffe.controls
 		
 		override protected function initDefaultStyle():void
 		{
+			super.initDefaultStyle();
 			setStyle(DEFAULT_STYLE);
 		}
 		

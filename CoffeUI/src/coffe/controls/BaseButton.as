@@ -12,6 +12,9 @@ package coffe.controls
 
 	public class BaseButton extends UIComponent
 	{
+		public static var DEFAULT_STYLE:Object = {
+		};
+		
 		protected var _labelTF:TextField;
 		protected var _labelFitler:String;
 		protected var _labelFormat:String;
@@ -27,6 +30,8 @@ package coffe.controls
 		protected var _labelAlign:String = AlignType.CENTER;
 		protected var _labelGap:int = 10;
 		protected var _labelTopGap:int = 0;
+		protected var _clickFunction:Function;
+		protected var _clickFunctionArgs:Object;
 		
 		public function BaseButton()
 		{
@@ -36,6 +41,11 @@ package coffe.controls
 			pressTimer.addEventListener(TimerEvent.TIMER,onPressTimer,false,0,true);
 		}
 		
+		override protected function initDefaultStyle():void
+		{
+			setStyle(DEFAULT_STYLE);
+		}
+		
 		override protected function initEvents():void
 		{
 			super.initEvents();
@@ -43,6 +53,7 @@ package coffe.controls
 			addEventListener(MouseEvent.MOUSE_DOWN,mouseEventHandler,false,0,true);
 			addEventListener(MouseEvent.MOUSE_UP,mouseEventHandler,false,0,true);
 			addEventListener(MouseEvent.ROLL_OUT,mouseEventHandler,false,0,true);
+			addEventListener(MouseEvent.CLICK, onClickHandler, false, 0, true);
 		}
 		
 		override protected function removeEvents():void
@@ -52,6 +63,15 @@ package coffe.controls
 			removeEventListener(MouseEvent.MOUSE_DOWN,mouseEventHandler);
 			removeEventListener(MouseEvent.MOUSE_UP,mouseEventHandler);
 			removeEventListener(MouseEvent.ROLL_OUT,mouseEventHandler);
+			removeEventListener(MouseEvent.CLICK, onClickHandler);
+		}
+		
+		protected function onClickHandler(event:MouseEvent):void
+		{
+			if(clickFunction != null)
+			{
+				clickFunction(clickFunctionArgs);
+			}
 		}
 		
 		protected function mouseEventHandler(event:MouseEvent):void {
@@ -170,6 +190,26 @@ package coffe.controls
 		{
 			_labelTopGap = value;
 			invalidate(InvalidationType.LABEL);
+		}
+		
+		public function get clickFunction():Function
+		{
+			return _clickFunction;
+		}
+		
+		public function set clickFunction(value:Function):void
+		{
+			_clickFunction = value;
+		}
+		
+		public function get clickFunctionArgs():Object
+		{
+			return _clickFunctionArgs;
+		}
+		
+		public function set clickFunctionArgs(value:Object):void
+		{
+			_clickFunctionArgs = value;
 		}
 
 		public function get autoRepeat():Boolean
