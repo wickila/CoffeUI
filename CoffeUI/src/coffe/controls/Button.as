@@ -9,6 +9,7 @@ package coffe.controls
 	
 	import coffe.core.AlignType;
 	import coffe.core.InvalidationType;
+	import coffe.core.UIComponent;
 
 	/**
 	 * 普通按钮。包括一个标签文本，一个Icon图标，一个背景。背景支持单张Bitmap，也支持跳帧的Moviclip，如果是Movieclip，可以在里面设置up,over,down的帧标签来实现按钮的状态切换
@@ -279,9 +280,9 @@ package coffe.controls
 		override public function dispose():void
 		{
 			super.dispose();
-			if(_background && contains(_background))removeChild(_background);
+			UIComponent.disposeObject(_background);
+			UIComponent.disposeObject(_icon);
 			_background = null;
-			if(_icon && contains(_icon))removeChild(_icon);
 			_icon = null;
 		}
 	}

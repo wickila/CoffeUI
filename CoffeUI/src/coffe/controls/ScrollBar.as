@@ -55,6 +55,11 @@ package coffe.controls
 			if(_upArrow)_upArrow.removeEventListener(ComponentEvent.BUTTON_DOWN,scrollPressHandler);
 			if(_downArrow)_downArrow.removeEventListener(ComponentEvent.BUTTON_DOWN,scrollPressHandler);
 			if(_thumb)_thumb.removeEventListener(MouseEvent.MOUSE_DOWN,thumbPressHandler);
+			if(stage)
+			{
+				stage.removeEventListener(MouseEvent.MOUSE_MOVE,handleThumbDrag);
+				stage.removeEventListener(MouseEvent.MOUSE_UP,thumbReleaseHandler);
+			}
 		}
 		
 		override protected function draw():void
@@ -329,8 +334,7 @@ package coffe.controls
 			if(_upArrow)_upArrow.dispose();_upArrow = null;
 			if(_downArrow)_downArrow.dispose();_downArrow = null;
 			if(_thumb)_thumb.dispose();_thumb = null;
-			if(_track && contains(_track))removeChild(_track);
-			_track = null;
+			if(_track && contains(_track))removeChild(_track);_track = null;
 		}
 	}
 }

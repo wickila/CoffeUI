@@ -383,12 +383,12 @@ package coffe.controls
 		
 		override public function dispose():void
 		{
-			if(_background && contains(_background))removeChild(_background);_background = null;
-			if(_closeBtn)_closeBtn.dispose();_closeBtn = null;
-			if(_okBtn)_okBtn.dispose();_okBtn = null;
-			if(_cancelBtn)_cancelBtn.dispose();_cancelBtn = null;
-			if(_titleTF&&contains(_titleTF))removeChild(_titleTF);_titleTF = null;
-			if(_content&&contains(_content))removeChild(_content);_content = null;
+			disposeObject(_background);_background = null;
+			disposeObject(_closeBtn);_closeBtn = null;
+			disposeObject(_okBtn);_okBtn = null;
+			disposeObject(_cancelBtn);_cancelBtn = null;
+			disposeObject(_titleTF);_titleTF = null;
+			disposeObject(_content);_content = null;
 			super.dispose();
 		}
 		[Inspectable(type="Number",defaultValue=50)]	

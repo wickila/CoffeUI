@@ -63,6 +63,8 @@ package coffe.controls
 		{
 			super.removeEvents();
 			removeEventListener(MouseEvent.CLICK,onMouseClick);
+			if(_group)
+				_group.removeEventListener(Event.CHANGE,handleChange,false);
 		}
 		
 		protected function onMouseClick(event:MouseEvent):void
@@ -326,6 +328,9 @@ package coffe.controls
 		override public function dispose():void
 		{
 			if (_group != null)_group.removeRadioButton(this);
+			disposeObject(_selectedBg);_selectedBg=null;
+			disposeObject(_unselectedBg);_unselectedBg=null;
+			_value=null;
 			super.dispose();
 		}
 	}

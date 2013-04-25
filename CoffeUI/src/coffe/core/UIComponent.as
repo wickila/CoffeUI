@@ -4,6 +4,7 @@ package coffe.core
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.filters.ColorMatrixFilter;
@@ -13,6 +14,7 @@ package coffe.core
 	import avmplus.getQualifiedClassName;
 	
 	import coffe.events.ComponentEvent;
+	import coffe.interfaces.IDisposable;
 	
 	public class UIComponent extends Sprite
 	{
@@ -357,8 +359,26 @@ package coffe.core
 		public function dispose():void
 		{
 			removeEvents();
+			callLaterMethods = null;
+			_invalidHash = null;
 			if(parent)
 				parent.removeChild(this);
+		}
+		
+		public static function disposeObject(obj:DisplayObject):void
+		{
+			if(obj==null)return;
+			if(obj is IDisposable)
+			{
+				IDisposable(obj).dispose();
+			}else if(obj is Bitmap)
+			{
+				Bitmap(obj).bitmapData.dispose();
+			}else if(obj is MovieClip)
+			{
+				MovieClip(obj).stop();
+			}
+			obj.parent&&obj.parent.removeChild(obj);
 		}
 	}
 }

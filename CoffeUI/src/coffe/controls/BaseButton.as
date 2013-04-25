@@ -9,8 +9,9 @@ package coffe.controls
 	import coffe.core.InvalidationType;
 	import coffe.core.UIComponent;
 	import coffe.events.ComponentEvent;
+	import coffe.interfaces.IDisposable;
 
-	public class BaseButton extends UIComponent
+	public class BaseButton extends UIComponent implements IDisposable
 	{
 		protected var _labelTF:TextField;
 		protected var _labelFitler:String;
@@ -52,6 +53,9 @@ package coffe.controls
 			removeEventListener(MouseEvent.MOUSE_DOWN,mouseEventHandler);
 			removeEventListener(MouseEvent.MOUSE_UP,mouseEventHandler);
 			removeEventListener(MouseEvent.ROLL_OUT,mouseEventHandler);
+			pressTimer.removeEventListener(TimerEvent.TIMER,onPressTimer,false);
+			if(stage!=null)
+				stage.removeEventListener(MouseEvent.MOUSE_UP,onStageMouseUp);
 		}
 		
 		protected function mouseEventHandler(event:MouseEvent):void {
@@ -185,7 +189,7 @@ package coffe.controls
 		override public function dispose():void
 		{
 			super.dispose();
-			if(_labelTF && contains(_labelTF))removeChild(_labelTF);
+			disposeObject(_labelTF);
 			_labelTF = null;
 		}
 	}

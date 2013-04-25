@@ -214,9 +214,9 @@ package coffe.controls
 		override public function dispose():void
 		{
 			super.dispose();
-			if(_selectedBg&&contains(_selectedBg))removeChild(_selectedBg);
+			disposeObject(_selectedBg);
 			_selectedBg = null;
-			if(_unselectedBg&&contains(_unselectedBg))removeChild(_unselectedBg);
+			disposeObject(_unselectedBg);
 			_unselectedBg = null;
 		}
 	}

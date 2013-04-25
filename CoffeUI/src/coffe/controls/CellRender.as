@@ -157,11 +157,11 @@ package coffe.controls
 		
 		override public function dispose():void
 		{
-			super.dispose();
-			if(_labelTF && contains(_labelTF))removeChild(_labelTF);
+			disposeObject(_labelTF);
 			_labelTF = null;
-			if(_background && contains(_background))removeChild(_background);
+			disposeObject(_background);
 			_background = null;
+			super.dispose();
 		}
 
 		public function set backgroundStyle(value:String):void

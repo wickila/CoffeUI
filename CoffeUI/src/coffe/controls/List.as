@@ -229,7 +229,12 @@ package coffe.controls
 			}
 			_cells = null;
 			_selectedData = null;
-			if(_data)_data.removeAll();_data = null;
+			if(_data)
+			{
+				_data.removeAll();
+				_data.removeEventListener(DataChangeEvent.DATA_CHANGE,onDataChange);
+			}
+			_data = null;
 		}
 
 		/**
