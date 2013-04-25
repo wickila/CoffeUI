@@ -74,6 +74,9 @@ package coffe.controls
 		private var _content:DisplayObject;
 		private var _titleFormat:String;
 		private var _titleFitler:String;
+		private var _soundPlayFun:Function;
+		private var _openSoundId:String;
+		private var _closeSoundId:String;
 		
 		private var _dragRect:Rectangle;
 		
