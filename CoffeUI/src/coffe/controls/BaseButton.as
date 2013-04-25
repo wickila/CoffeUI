@@ -64,11 +64,9 @@ package coffe.controls
 			removeEventListener(MouseEvent.MOUSE_DOWN,mouseEventHandler);
 			removeEventListener(MouseEvent.MOUSE_UP,mouseEventHandler);
 			removeEventListener(MouseEvent.ROLL_OUT,mouseEventHandler);
-<<<<<<< HEAD
 			pressTimer.removeEventListener(TimerEvent.TIMER,onPressTimer,false);
 			if(stage!=null)
 				stage.removeEventListener(MouseEvent.MOUSE_UP,onStageMouseUp);
-=======
 			removeEventListener(MouseEvent.CLICK, onClickHandler);
 		}
 		
@@ -78,7 +76,6 @@ package coffe.controls
 			{
 				clickFunction(clickFunctionArgs);
 			}
->>>>>>> c8dcecb921683f2b246611bc47c3960f762ae644
 		}
 		
 		protected function mouseEventHandler(event:MouseEvent):void {
