@@ -24,7 +24,8 @@ package coffe.controls
 		public function CheckBox()
 		{
 			super();
-			_labelGap = 10;
+			_labelGap = 2;
+			_labelTopGap = -2;
 		}
 		
 		override protected function initDefaultStyle():void
@@ -184,7 +185,7 @@ package coffe.controls
 		override public function drawLayout():void
 		{
 			_labelTF.x = _selectedBg.width+_labelGap;
-			_labelTF.y = (_selectedBg.height-_labelTF.textHeight)*.5;
+			_labelTF.y = (_selectedBg.height-_labelTF.textHeight)*0.5 + _labelTopGap;
 			_labelTF.width = _labelTF.textWidth+10;
 			_labelTF.height = _labelTF.textHeight+10;
 			var obj:Object;

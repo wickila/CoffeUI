@@ -27,13 +27,13 @@ package coffe.controls
 		public static var DEFAULT_STYLE:Object = {
 			closeBackGroundStyle:"CloseButtonSkin",
 			backgroundStyle:"FrameSkin",
-			okStyle:{"backGroundStyle":"ButtonDefaultSkin","labelFormat":'{"color":"0x000000","font":"Arial","size":16,"kerning":true,"letterSpacing":5}'},
-			cancelStyle:{"backGroundStyle":"ButtonDefaultSkin","labelFormat":'{"color":"0x000000","font":"Arial","size":16,"kerning":true,"letterSpacing":5}'},
-			closeBtnRight:10,
-			closeBtnTop:0,
-			titleFilter:'{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}',
-			titleFormat:'{"color":"0x000000","font":"Arial","size":12}',
-			titleAlign:'left'
+			okStyle:{"backGroundStyle":"ButtonDefaultSkin","labelFormat":'{"color":"0xFDE4AE","font":"Arial","size":14,"kerning":true,"letterSpacing":5}',"labelFilter":'{"color":"0x522A07","alpha":1,"blurX":4,"blurY":4,"strength":10,"quality":1,"inner":false,"knockout":false}'},
+			cancelStyle:{"backGroundStyle":"ButtonDefaultSkin","labelFormat":'{"color":"0xFDE4AE","font":"Arial","size":14,"kerning":true,"letterSpacing":5}',"labelFilter":'{"color":"0x522A07","alpha":1,"blurX":4,"blurY":4,"strength":10,"quality":1,"inner":false,"knockout":false}'},
+			closeBtnRight:13,
+			closeBtnTop:-1,
+			titleFilter:'{"color":"0x482B15","alpha":1,"blurX":4,"blurY":4,"strength":10,"quality":1,"inner":false,"knockout":false}',
+			titleFormat:'{"color":"0xFFE9B3","font":"Arial","size":14,"kerning":true,"letterSpacing":5,"bold":true}',
+			titleAlign:'center'
 		};
 		
 		public var dragEnable:Boolean = true;
