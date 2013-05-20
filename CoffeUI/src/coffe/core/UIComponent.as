@@ -218,7 +218,6 @@ package coffe.core
 			}
 			
 			if(classDef == null) {
-				trace("UIComponent getDisplayObjectInstance style:" + style);
 				return null;
 			}
 			var instance:Object = new classDef();

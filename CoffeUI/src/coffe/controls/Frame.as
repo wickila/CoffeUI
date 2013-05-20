@@ -46,7 +46,7 @@ package coffe.controls
 		private var _contentSide:int = 20;
 		private var _buttonToBottom:int = 15;
 		
-		private var _titleTop:int = 8;
+		private var _titleTop:int = 5;
 		private var _titleLeft:int=10;
 		private var _titleAlign:String=AlignType.LEFT;
 		
