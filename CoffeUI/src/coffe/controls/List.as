@@ -83,7 +83,7 @@ package coffe.controls
 		
 		override protected function updateScrollBar():void
 		{
-			contentClip.graphics.endFill();
+			contentClip.graphics.clear();
 			contentClip.graphics.beginFill(0,0);
 			contentClip.graphics.drawRect(0,0,width,_data.length*(_cellHeight+_gap));
 			contentClip.graphics.endFill();
