@@ -148,12 +148,13 @@ package coffe.controls
 		
 		protected function onClose(event:FrameEvent):void
 		{
-			if(parent!=null)
+			if(autoDispose)
+			{
+				dispose();
+			}else if(parent!=null)
 			{
 				removeEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
 				parent.removeChild(this);
-				if(autoDispose)
-					dispose();
 			}
 		}
 		
