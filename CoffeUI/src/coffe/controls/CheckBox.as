@@ -186,7 +186,7 @@ package coffe.controls
 		{
 			_labelTF.x = _selectedBg.width+_labelGap;
 			_labelTF.y = (_selectedBg.height-_labelTF.textHeight)*0.5 + _labelTopGap;
-			_labelTF.width = _labelTF.textWidth+10;
+			_labelTF.width = _labelTF.textWidth+16;
 			_labelTF.height = _labelTF.textHeight+10;
 			var obj:Object;
 			if(_labelFitler)
