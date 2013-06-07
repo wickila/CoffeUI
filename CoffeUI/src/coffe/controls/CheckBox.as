@@ -186,8 +186,6 @@ package coffe.controls
 		{
 			_labelTF.x = _selectedBg.width+_labelGap;
 			_labelTF.y = (_selectedBg.height-_labelTF.textHeight)*0.5 + _labelTopGap;
-			_labelTF.width = _labelTF.textWidth+16;
-			_labelTF.height = _labelTF.textHeight+10;
 			var obj:Object;
 			if(_labelFitler)
 			{
@@ -211,6 +209,8 @@ package coffe.controls
 					trace("按钮标签样式格式错误",_labelFormat);
 				}
 			}
+			_labelTF.width = _labelTF.textWidth+16;
+			_labelTF.height = _labelTF.textHeight+10;
 		}
 		
 		override public function dispose():void
