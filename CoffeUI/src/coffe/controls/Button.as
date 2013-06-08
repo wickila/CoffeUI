@@ -101,7 +101,7 @@ package coffe.controls
 			}
 			if(_labelTF)
 			{
-				if(_background.width < _labelTF.textWidth-_labelGap*2)
+				if(_background.width < _labelTF.textWidth+_labelGap*2)
 				{
 					_background.width = _labelTF.textWidth + _labelGap*2;
 				}

@@ -134,10 +134,16 @@ package coffe.controls
 				_labelTF = new TextField();
 				_labelTF.selectable = _labelTF.mouseEnabled = false;
 				_labelTF.cacheAsBitmap = true;
-				addChild(_labelTF);
 			}
 			_labelTF.text = _label;
 			_labelTF.textColor = _textColor;
+			if(_label)
+			{
+				addChild(_labelTF);
+			}else
+			{
+				_labelTF.parent&&_labelTF.parent.removeChild(_labelTF);
+			}
 			if(isInvalid(InvalidationType.LABEL,InvalidationType.STYLE))
 			{
 				drawLayout();
