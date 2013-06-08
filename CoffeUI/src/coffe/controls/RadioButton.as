@@ -87,7 +87,10 @@ package coffe.controls
 		
 		override public function dispose():void
 		{
-			if (_group != null)_group.removeRadioButton(this);
+			if (_group != null){
+				_group.removeRadioButton(this);
+				_group.removeEventListener(Event.CHANGE,handleChange);
+			}
 			_value = null;
 			super.dispose();
 		}
