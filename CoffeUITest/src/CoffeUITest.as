@@ -27,11 +27,11 @@ package
 //			function onComplete(event:Event):void
 			{
 //				testRadioBtn();
-				testSelectBtn();
+//				testSelectBtn();
 //				testButton();
 //				testFrame();
 //				testList();
-//				testScrollBar();
+				testScrollBar();
 			}
 		}
 		
