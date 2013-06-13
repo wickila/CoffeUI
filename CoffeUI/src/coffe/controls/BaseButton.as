@@ -30,7 +30,7 @@ package coffe.controls
 		protected var _selected:Boolean;
 		protected var _labelAlign:String = AlignType.CENTER;
 		protected var _labelGap:int = 10;
-		protected var _labelTopGap:int = 0;
+		protected var _labelTopGap:int = -2;
 		protected var _clickFunction:Function;
 		protected var _clickFunctionArgs:Object;
 		

@@ -117,7 +117,7 @@ package coffe.controls
 						_labelTF.x = _background.width - _labelTF.textWidth - _labelGap;
 						break;
 				}
-				_labelTF.y = (_background.height - _labelTF.textHeight)*.5-2;
+				_labelTF.y = (_background.height - _labelTF.textHeight)*.5+_labelTopGap;
 				_labelTF.height = _background.height-_labelTF.y;
 				_labelTF.width = _background.width-_labelTF.x;
 			}

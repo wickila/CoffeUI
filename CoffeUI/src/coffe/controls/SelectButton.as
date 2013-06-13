@@ -307,7 +307,7 @@ package coffe.controls
 			_selectedBg.height = _unselectedBg.height = height;
 			var bg:DisplayObject = _selected?_selectedBg:_unselectedBg;
 			_labelTF.x = ((bg.width-_labelTF.textWidth)>>1)+_labelGap;
-			_labelTF.y = (bg.height-_labelTF.textHeight)>>1;
+			_labelTF.y = ((bg.height-_labelTF.textHeight)>>1)+_labelTopGap;
 			_labelTF.width = _labelTF.textWidth+10;
 			_labelTF.height = _labelTF.textHeight+10;
 		}
