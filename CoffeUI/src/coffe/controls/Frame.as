@@ -543,6 +543,19 @@ package coffe.controls
 			_dragRect = value;
 		}
 
-
+		public function get closeButton():Button
+		{
+			return _closeBtn;
+		}
+		
+		public function get okButton():Button
+		{
+			return _okBtn;
+		}
+		
+		public function get cancelButton():Button
+		{
+			return _cancelBtn;
+		}
 	}
 }

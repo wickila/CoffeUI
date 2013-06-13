@@ -189,7 +189,7 @@ package coffe.controls
 			invalidate(InvalidationType.LABEL);
 		}
 		
-		[Inspectable(defaultValue=0, name="标签顶部间隔", type="Number")]
+		[Inspectable(defaultValue=-2, name="标签顶部间隔", type="Number")]
 		public function set labelTopGap(value:int):void
 		{
 			_labelTopGap = value;
