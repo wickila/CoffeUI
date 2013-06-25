@@ -80,25 +80,6 @@ package coffe.controls
 		{
 			_background.width = width;
 			_background.height = height;
-			if(hasFrameLabel(_mouseState))
-			{
-				_background["gotoAndStop"](_mouseState);
-			}else
-			{
-				if(enable)
-				{
-					if(_mouseState=="over"||_mouseState=="down")
-					{
-						filters = [LIGHT_FILTER];
-					}else
-					{
-						filters = null;
-					}
-				}else
-				{
-					filters = [GRAY_FILTER];
-				}
-			}
 			if(_labelTF)
 			{
 				if(_background.width < _labelTF.textWidth+_labelGap*2)
@@ -189,9 +170,36 @@ package coffe.controls
 			{
 				drawLabel();
 			}
-			if(isInvalid(InvalidationType.SIZE,InvalidationType.LABEL,InvalidationType.STYLE,InvalidationType.STATE))
+			if(isInvalid(InvalidationType.SIZE,InvalidationType.LABEL,InvalidationType.STYLE))
 			{
 				drawLayout();
+			}
+			if(isInvalid(InvalidationType.STATE))
+			{
+				drawMouseState();
+			}
+		}
+		
+		private function drawMouseState():void
+		{
+			if(hasFrameLabel(_mouseState))
+			{
+				_background["gotoAndStop"](_mouseState);
+			}else
+			{
+				if(enable)
+				{
+					if(_mouseState=="over"||_mouseState=="down")
+					{
+						filters = [LIGHT_FILTER];
+					}else
+					{
+						filters = null;
+					}
+				}else
+				{
+					filters = [GRAY_FILTER];
+				}
 			}
 		}
 		

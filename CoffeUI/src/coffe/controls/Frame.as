@@ -32,10 +32,9 @@ package coffe.controls
 			closeBtnRight:13,
 			closeBtnTop:-1,
 			titleFilter:'{"color":"0x482B15","alpha":1,"blurX":4,"blurY":4,"strength":10,"quality":1,"inner":false,"knockout":false}',
-			titleFormat:'{"color":"0xFFE9B3","font":"Arial","size":14,"kerning":true,"letterSpacing":5,"bold":true}',
+			titleFormat:'{"color":"0xFFE9B3","font":"Arial","size":14,"kerning":true,"letterSpacing":5,"bold":true,"align":"center"}',
 			titleAlign:'center'
 		};
-		
 		public var dragEnable:Boolean = true;
 		
 		private var _okStyle:Object;
@@ -243,6 +242,7 @@ package coffe.controls
 				}
 				_titleTF.x += _titleLeft;
 				_titleTF.y = _titleTop;
+				_titleTF.width = _titleTF.textWidth+20;
 			}
 			if(_showCloseBtn){_closeBtn.x = _background.width - _closeBtn.width - _closeBtnRight;_closeBtn.y=_closeBtnTop;}
 			if(_cancelBtn)
@@ -276,10 +276,10 @@ package coffe.controls
 			if(_showCancelBtn){if(_cancelBtn == null){_cancelBtn = new Button();_cancelBtn.label = "";addChild(_cancelBtn);_cancelBtn.addEventListener(MouseEvent.CLICK,onBtnClick);}}
 			if(_showOkBtn){if(_okBtn == null){_okBtn = new Button();_okBtn.label = "";addChild(_okBtn);_okBtn.addEventListener(MouseEvent.CLICK,onBtnClick);}}
 			if(_showCloseBtn){if(_closeBtn == null){_closeBtn = new Button();_closeBtn.label = "";addChild(_closeBtn);_closeBtn.addEventListener(MouseEvent.CLICK,onBtnClick);}}
-			if(_title){if(_titleTF == null){_titleTF = new TextField();_titleTF.multiline = _titleTF.selectable = _titleTF.mouseEnabled = false;addChild(_titleTF);}}
 			if(_background && contains(_background)){removeChild(_background)}
 			_background = getDisplayObjectInstance(_backgroundStyle);
 			addChildAt(_background,0);
+			if(_title){if(_titleTF == null){_titleTF = new TextField();_titleTF.multiline = _titleTF.selectable = _titleTF.mouseEnabled = false;_titleTF.width=width;_titleTF.height=30;addChild(_titleTF);}}
 		}
 		
 		protected function onBtnClick(event:MouseEvent):void
