@@ -220,6 +220,10 @@ package coffe.core
 			}
 			
 			if(classDef == null) {
+				if(style)
+				{
+					trace("can't find style! StyleName:",style);
+				}
 				return null;
 			}
 			var instance:Object = new classDef();
