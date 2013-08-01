@@ -147,6 +147,11 @@ package coffe.controls
 			if(_background){
 				_background.width = width;
 				_background.height = height;
+			}else
+			{
+				graphics.beginFill(0,0);
+				graphics.drawRect(0,0,width,height);
+				graphics.endFill();
 			}
 			updateScrollBar();
 		}

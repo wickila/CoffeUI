@@ -1,7 +1,9 @@
 package coffe.controls
 {
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.FrameLabel;
+	import flash.display.InteractiveObject;
 	import flash.display.MovieClip;
 	import flash.filters.GlowFilter;
 	import flash.text.TextField;
@@ -258,6 +260,10 @@ package coffe.controls
 				if(_background&&contains(_background))removeChild(_background);
 				_background = newBg;
 				addChildAt(_background,0);
+				var inter:InteractiveObject = _background as InteractiveObject;
+				var con:DisplayObjectContainer = _background as DisplayObjectContainer;
+				inter&&(inter.mouseEnabled=false);
+				con&&(con.mouseChildren=false);
 			}
 		}
 		

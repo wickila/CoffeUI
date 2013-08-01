@@ -131,7 +131,7 @@ package coffe.controls
 		 */		
 		private function createCells():void
 		{
-			var cellNum:Number = Math.min(_data.length,Math.ceil(height/_cellHeight)+2)-_cells.length;
+			var cellNum:Number = Math.min(_data.length,Math.ceil(height/(_cellHeight+_gap))+2)-_cells.length;
 			for(var i:int=0;i<cellNum;i++)
 			{
 				var cell:DisplayObject = getDisplayObjectInstance(_cellRender);
