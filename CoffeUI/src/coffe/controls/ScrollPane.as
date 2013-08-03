@@ -149,6 +149,7 @@ package coffe.controls
 				_background.height = height;
 			}else
 			{
+				graphics.clear();
 				graphics.beginFill(0,0);
 				graphics.drawRect(0,0,width,height);
 				graphics.endFill();
