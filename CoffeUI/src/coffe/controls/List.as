@@ -26,7 +26,7 @@ package coffe.controls
 		private var _cellRender:String;
 		private var _cells:Vector.<ICellRender>;
 		private var _data:DataProvider;
-		private var _gap:int=2;
+		private var _gap:Number=2;
 		private var _cellHeight:Number;
 		private var _selectedData:Object;
 		private var _labelField:String;
@@ -254,12 +254,12 @@ package coffe.controls
 		 * @return 
 		 * 
 		 */		
-		public function get gap():int
+		public function get gap():Number
 		{
 			return _gap;
 		}
 
-		public function set gap(value:int):void
+		public function set gap(value:Number):void
 		{
 			_gap = value;
 			invalidate(InvalidationType.SIZE);
