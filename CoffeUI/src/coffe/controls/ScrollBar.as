@@ -328,6 +328,12 @@ package coffe.controls
 			}
 		}
 		
+		override public function set enable(value:Boolean):void
+		{
+			super.enable = value;
+			filters=[];
+		}
+		
 		override public function dispose():void
 		{
 			super.dispose();
