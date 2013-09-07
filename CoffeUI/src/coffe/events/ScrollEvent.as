@@ -4,7 +4,7 @@ package coffe.events {
 	import flash.events.Event;
 
 	/**
-	 * The ScrollEvent class defines the scroll event that is associated with the ScrollBar component.
+	 * 滚动条组件滚动时,发出此事件
 	 * 
 	 * @see fl.controls.ScrollBar ScrollBar
 	 * @see fl.controls.ScrollBarDirection ScrollBarDirection

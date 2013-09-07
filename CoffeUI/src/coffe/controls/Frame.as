@@ -16,14 +16,56 @@ package coffe.controls
 	import coffe.data.Language;
 	import coffe.events.FrameEvent;
 
-	/**
-	 *	弹出框 
-	 * @author wicki
-	 * 
-	 */	
 	[Event(name="frameEvent", type="coffe.events.FrameEvent")]
+	
+	/**
+	 *	弹出框组件.包含一个关闭按钮,确定按钮,取消按钮.支持键盘事件.使用的时候可以把自定义的显示对象添加进弹出框内显示
+	 * 	<br>可设置样式属性
+	 * <table width="100%">
+	 * <tr><td>样式名称</td><td>描述</td><td>默认值</td></tr>
+	 * <tr><td>closeBackGroundStyle</td><td>关闭按钮背景样式</td><td>CloseButtonSkin</td></tr>
+	 * <tr><td>okBackGroundStyle</td><td>确定按钮背景样式</td><td>ButtonDefaultSkin</td></tr>
+	 * <tr><td>cancelBackGroundStyle</td><td>取消按钮背景样式</td><td>ButtonDefaultSkin</td></tr>
+	 * <tr><td>backgroundStyle</td><td>背景样式</td><td>FrameSkin</td></tr>
+	 * <tr><td>okStyle</td><td>确定按钮样式</td><td>{"backGroundStyle":"ButtonDefaultSkin",<br>"labelFormat":'{"color":"0xFDE4AE","font":"Arial",<br>"size":14,"kerning":true,"letterSpacing":5}',<br>"labelFilter":'{"color":"0x522A07","alpha":1,<br>"blurX":4,"blurY":4,"strength":10,"quality":1,<br>"inner":false,"knockout":false}'}</td></tr>
+	 * <tr><td>okLabel</td><td>确定按钮标签</td><td>Language.OK</td></tr>
+	 * <tr><td>cancelStyle</td><td>取消按钮样式</td><td>{"backGroundStyle":"ButtonDefaultSkin",<br>"labelFormat":'{"color":"0xFDE4AE","font":"Arial",<br>"size":14,"kerning":true,"letterSpacing":5}',<br>"labelFilter":'{"color":"0x522A07","alpha":1,<br>"blurX":4,"blurY":4,"strength":10,"quality":1,<br>"inner":false,"knockout":false}'}</td></tr>
+	 * <tr><td>cancelLable</td><td>取消按钮标签</td><td>Language.CANCEL</td></tr>
+	 * <tr><td>closeBtnRight</td><td>关闭按钮距离弹出框最右边的距离</td><td>13</td></tr>
+	 * <tr><td>closeBtnTop</td><td>关闭按钮距离弹出框最顶端的距离</td><td>-1</td></tr>
+	 * <tr><td>titleFilter</td><td>标题发光滤镜</td><td>'{"color":"0x482B15","alpha":1,"blurX":4,<br>"blurY":4,"strength":10,"quality":1,<br>"inner":false,"knockout":false}'</td></tr>
+	 * <tr><td>titleFormat</td><td>标题文本样式</td><td>'{"color":"0xFFE9B3","font":"Arial","size":14,<br>"kerning":true,"letterSpacing":5,"bold":true,<br>"align":"center"}'</td></tr>
+	 * <tr><td>titleAlign</td><td>标题水平对齐方式</td><td>"center"</td></tr>
+	 * <tr><td>buttonToBottom</td><td>确定取消按钮距离底部的距离</td><td>15</td></tr>
+	 * <tr><td>titleTop</td><td>标题距离顶部的按钮</td><td>5</td></tr>
+	 * <tr><td>titleLeft</td><td>标题距离左边的按钮</td><td>10</td></tr>
+	 * </table>
+	 * @see coffe.events.FrameEvent
+	 */	
 	public class Frame extends UIComponent
 	{
+		/**
+		 *	组件的全局默认样式.每个组件都拥有自己单独的 DEFAULT_STYLE,并且在组件初始化的时候,会将DEFAULT_STYLE的样式信息赋值给组件.
+		 * 	<br>此默认样式信息是全局样式信息.所以可以在程序初始化的时候,设置组件的全局默认样式信息.
+		 * 	<br>默认弹出框样式:
+		 * 	<table width="100%">
+		 * <tr><td>样式名称</td><td>描述</td><td>默认值</td></tr>
+		 * <tr><td>closeBackGroundStyle</td><td>关闭按钮背景样式</td><td>CloseButtonSkin</td></tr>
+		 * <tr><td>backgroundStyle</td><td>背景样式</td><td>FrameSkin</td></tr>
+		 * <tr><td>okStyle</td><td>确定按钮样式</td><td>{"backGroundStyle":"ButtonDefaultSkin",<br>"labelFormat":'{"color":"0xFDE4AE","font":"Arial",<br>"size":14,"kerning":true,"letterSpacing":5}',<br>"labelFilter":'{"color":"0x522A07","alpha":1,<br>"blurX":4,"blurY":4,"strength":10,"quality":1,<br>"inner":false,"knockout":false}'}</td></tr>
+		 * <tr><td>cancelStyle</td><td>取消按钮样式</td><td>{"backGroundStyle":"ButtonDefaultSkin",<br>"labelFormat":'{"color":"0xFDE4AE","font":"Arial",<br>"size":14,"kerning":true,"letterSpacing":5}',<br>"labelFilter":'{"color":"0x522A07","alpha":1,<br>"blurX":4,"blurY":4,"strength":10,"quality":1,<br>"inner":false,"knockout":false}'}</td></tr>
+		 * <tr><td>closeBtnRight</td><td>关闭按钮距离弹出框最右边的距离</td><td>13</td></tr>
+		 * <tr><td>closeBtnTop</td><td>关闭按钮距离弹出框最顶端的距离</td><td>-1</td></tr>
+		 * <tr><td>titleFilter</td><td>标题发光滤镜</td><td>'{"color":"0x482B15","alpha":1,"blurX":4,<br>"blurY":4,"strength":10,"quality":1,<br>"inner":false,"knockout":false}'</td></tr>
+		 * <tr><td>titleFormat</td><td>标题文本样式</td><td>'{"color":"0xFFE9B3","font":"Arial","size":14,<br>"kerning":true,"letterSpacing":5,"bold":true,<br>"align":"center"}'</td></tr>
+		 * <tr><td>titleAlign</td><td>标题水平对齐方式</td><td>"center"</td></tr>
+		 * </table>
+		 * 	@see coffe.core.UIComponent.initDefaultStyle()
+		 * 	@see coffe.core.UIComponent.setStyle()
+		 * 	@see coffe.core.UIComponent.combinStyle()
+		 * 	@example
+		 * 	ObjectUtils.combineObject(ComboBox.DEFAULT_STYLE,{"listStyle":{"cellRender":"com.dragonlance.view.ComboxCellRender","backgroundStyle":"dl.asset.core.ComboxListBgAsset"},"buttonStyle":{"labelFormat":'{"color":"0xffffff","font":"宋体","size":12}',"labelFilter":""}});
+		 */
 		public static var DEFAULT_STYLE:Object = {
 			closeBackGroundStyle:"CloseButtonSkin",
 			backgroundStyle:"FrameSkin",
@@ -35,6 +77,12 @@ package coffe.controls
 			titleFormat:'{"color":"0xFFE9B3","font":"Arial","size":14,"kerning":true,"letterSpacing":5,"bold":true,"align":"center"}',
 			titleAlign:'center'
 		};
+		/**
+		 *	是否可以按住弹出框标题栏拖拽.默认为true.
+		 * 	只有九宫格的背景可以拖拽.如果普通的MovieClip背景需要可以拖拽.请主动设置dragRect属性 
+		 *  @see coffe.controls.Frame.dragRect
+		 * 	@see flash.display.DisplayObject.scale9Grid
+		 */
 		public var dragEnable:Boolean = true;
 		
 		private var _okStyle:Object;
@@ -79,8 +127,14 @@ package coffe.controls
 		
 		private var _dragRect:Rectangle;
 		
+		/**
+		 *	是否在处理关闭事件时自动销毁.默认为true 
+		 */
 		public var autoDispose:Boolean=true;
-		
+		/**
+		 *	创建一个弹出框 
+		 * 
+		 */		
 		public function Frame()
 		{
 			super();
@@ -126,12 +180,22 @@ package coffe.controls
 			removeEventListener(MouseEvent.MOUSE_UP,onMouseUp);
 		}
 		
+		/**
+		 *	添加到舞台时.舞台焦点设置到弹出框上.并且添加键盘事件. 
+		 * @param event 添加到舞台事件
+		 * 
+		 */
 		protected function onAddToStage(event:Event):void
 		{
 			stage.focus = this;
 			addEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
 		}
 		
+		/**
+		 *	监听到键盘的escape与enter按下时,发出弹出框事件. 
+		 * @param event 键盘按下事件
+		 * @see coffe.events.FrameEvent
+		 */
 		protected function onKeyDown(event:KeyboardEvent):void
 		{
 			switch(event.keyCode)
@@ -145,6 +209,11 @@ package coffe.controls
 			}
 		}
 		
+		/**
+		 *	监听到弹出框事件后的处理函数. 可覆写该方法,根据事件的类型来处理相应的事务.
+		 * @param event 弹出框事件
+		 * @see coffe.events.FrameEvent
+		 */
 		protected function onClose(event:FrameEvent):void
 		{
 			if(autoDispose)
@@ -282,6 +351,11 @@ package coffe.controls
 			if(_title){if(_titleTF == null){_titleTF = new TextField();_titleTF.multiline = _titleTF.selectable = _titleTF.mouseEnabled = false;_titleTF.width=width;_titleTF.height=30;addChild(_titleTF);}}
 		}
 		
+		/**
+		 *	关闭按钮,确定按钮,取消按钮的鼠标点击事件处理函数 
+		 * @param event
+		 * @see coffe.events.FrameEvent
+		 */
 		protected function onBtnClick(event:MouseEvent):void
 		{
 			switch(event.currentTarget)
@@ -297,6 +371,12 @@ package coffe.controls
 					break;
 			}
 		}
+		/**
+		 *	背景样式.一般为九宫格显示对象的类名. 
+		 * 默认值:FrameSkin
+		 * @param value 背景样式
+		 * 
+		 */		
 		[Inspectable(type="String",defaultValue="FrameSkin")]
 		public function set backgroundStyle(value:String):void
 		{
@@ -304,6 +384,12 @@ package coffe.controls
 			_backgroundStyle = value;
 			invalidate(InvalidationType.STYLE);
 		}
+		/**
+		 *	 关闭按钮背景样式.
+		 * 默认值:CloseButtonSkin
+		 * @param value 关闭按钮背景样式.
+		 * @see coffe.controls.Button.backGroundStyle
+		 */		
 		[Inspectable(type="String",defaultValue="CloseButtonSkin")]
 		public function set closeBackGroundStyle(value:String):void
 		{
@@ -311,6 +397,12 @@ package coffe.controls
 			_closeBackGroundStyle = value;
 			invalidate(InvalidationType.STYLE);
 		}
+		/**
+		 *	确定按钮背景样式
+		 * 默认值: ButtonDefaultSkin
+		 * @param value 确定按钮背景样式
+		 * @see coffe.controls.Button.backGroundStyle
+		 */		
 		[Inspectable(type="String",defaultValue="ButtonDefaultSkin")]
 		public function set okBackGroundStyle(value:String):void
 		{
@@ -318,6 +410,12 @@ package coffe.controls
 			_okBackGroundStyle = value;
 			invalidate(InvalidationType.STYLE);
 		}
+		/**
+		 *	取消按钮背景样式
+		 * 默认值: ButtonDefaultSkin
+		 * @param value 取消按钮背景样式
+		 * @see coffe.controls.Button.backGroundStyle
+		 */	
 		[Inspectable(type="String",defaultValue="ButtonDefaultSkin")]
 		public function set cancelBackGroundStyle(value:String):void
 		{
@@ -325,6 +423,11 @@ package coffe.controls
 			_cancelBackGroundStyle = value;
 			invalidate(InvalidationType.STYLE);
 		}
+		/**
+		 *	是否显示取消按钮.默认为true. 
+		 * @param value 是否显示取消按钮.
+		 * 
+		 */		
 		[Inspectable(type="Boolean",defaultValue=true)]
 		public function set showCancelBtn(value:Boolean):void
 		{
@@ -332,6 +435,11 @@ package coffe.controls
 			_showCancelBtn = value;
 			invalidate(InvalidationType.STYLE);
 		}
+		/**
+		 *	是否显示确定按钮.默认为true. 
+		 * @param value 是否显示确定按钮.
+		 * 
+		 */		
 		[Inspectable(type="Boolean",defaultValue=true)]
 		public function set showOkBtn(value:Boolean):void
 		{
@@ -339,6 +447,11 @@ package coffe.controls
 			_showOkBtn = value;
 			invalidate(InvalidationType.STYLE);
 		}
+		/**
+		 *	是否显示关闭按钮.默认为true. 
+		 * @param value 是否显示关闭按钮.
+		 * 
+		 */		
 		[Inspectable(type="Boolean",defaultValue=true)]
 		public function set showCloseBtn(value:Boolean):void
 		{
@@ -346,6 +459,11 @@ package coffe.controls
 			_showCloseBtn = value;
 			invalidate(InvalidationType.STYLE);
 		}
+		/**
+		 *	取消按钮标签值.默认为Language.CANEL 
+		 * @param value 取消按钮标签值.
+		 * @see coffe.data.Language
+		 */		
 		[Inspectable(type="String")]
 		public function set cancelLabel(value:String):void
 		{
@@ -353,7 +471,11 @@ package coffe.controls
 			_cancelLabel = value;
 			invalidate(InvalidationType.STATE);
 		}
-		
+		/**
+		 *	确定按钮标签值.默认为Language.OK 
+		 * @param value 确定按钮标签值
+		 * @see coffe.data.Language
+		 */		
 		[Inspectable(type="String")]
 		public function set okLabel(value:String):void
 		{
@@ -361,6 +483,11 @@ package coffe.controls
 			_okLabel = value;
 			invalidate(InvalidationType.STATE);
 		}
+		/**
+		 *	弹出框标题.默认为"" 
+		 * @param value 弹出框标题
+		 * 
+		 */		
 		[Inspectable(type="String",defaultValue="")]
 		public function set title(value:String):void
 		{
@@ -369,6 +496,12 @@ package coffe.controls
 			invalidate(InvalidationType.STYLE);
 		}
 		
+		/**
+		 *	把自定义的显示对象添加到弹出框内显示. 如果adaptive为true,则弹出框根据自适应属性自动适应显示内容的大小.如果adaptive为false,则自适应的属性如contentTop,contentBottom,contentSide等会失效.
+		 * @param content 需要显示的显示对象
+		 * @param adaptive 弹出框是否自适应显示内容.是否需要弹出框自动适应显示内容的尺寸.默认为true
+		 * 
+		 */
 		public function setContent(content:DisplayObject,adaptive:Boolean = true):void
 		{
 			_content = content;
@@ -395,39 +528,63 @@ package coffe.controls
 			disposeObject(_content);_content = null;
 			super.dispose();
 		}
+		/**
+		 *	显示内容距离弹出框顶部的距离.
+		 * @param value 显示内容距离弹出框顶部的距离.默认为50 
+		 * @see coffe.controls.Frame.setContent()
+		 */		
 		[Inspectable(type="Number",defaultValue=50)]	
 		public function set contentTop(value:int):void
 		{
 			_contentTop = value;
 		}
+		/**
+		 *	显示内容距离弹出框底部的距离.
+		 * @param value 显示内容距离弹出框底部的距离.默认为30 
+		 * @see coffe.controls.Frame.setContent()
+		 */		
 		[Inspectable(type="Number",defaultValue=30)]	
 		public function set contentBottom(value:int):void
 		{
 			_contentBottom = value;
 		}
+		/**
+		 *	显示内容距离弹出框两边的距离.
+		 * @param value 显示内容距离弹出框两边的距离.默认为20 
+		 * @see coffe.controls.Frame.setContent()
+		 */	
 		[Inspectable(type="Number",defaultValue=20)]		
 		public function set contentSide(value:int):void
 		{
 			_contentSide = value;
 		}
-		
+		/**
+		 *	标题发光滤镜.为一个json格式的字符串,里面可以包含GlowFilter的各种属性值
+		 * 	@param value 一段json格式的标签滤镜字符串.<br>默认值: '{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}'
+		 * 	@see flash.filters.GlowFilter
+		 */		
 		[Inspectable(type="String",name="标题滤镜",defaultValue='{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}')]
 		public function set titleFilter(value:String):void
 		{
 			_titleFitler = value;
 			invalidate(InvalidationType.STATE);
 		}
-		
+		/**
+		 *	标题样式.为一个json格式的字符串,里面可以包含TextFormat的各种属性值
+		 * 	@param value 一段json格式的文本样式字符串.<br>默认值: {"color":"0x000000","font":"Arial","size":12}
+		 * 	@see flash.text.TextFormat
+		 */
 		[Inspectable(type="String",name="标题样式",defaultValue='{"color":"0x000000","font":"Arial","size":12}')]
 		public function set titleFormat(value:String):void
 		{
 			_titleFormat = value;
 			invalidate(InvalidationType.STATE);
 		}
-
 		/**
-		 *	底部按钮距离底部的距离 
-		 */
+		 * 确定取消按钮距离弹出框底部的距离.
+		 * @param value 确定取消按钮距离弹出框底部的距离.默认值:15
+		 * 
+		 */		
 		[Inspectable(type="Number",defaultValue=15)]	
 		public function set buttonToBottom(value:int):void
 		{
@@ -438,41 +595,43 @@ package coffe.controls
 		{
 			return _titleAlign;
 		}
-		
-		[Inspectable(defaultValue="left", type="list", enumeration="left,center,right")]
+		/**
+		 *	弹出框标题水平对齐方式. 
+		 * @param value 弹出框标题水平对齐方式.默认值:"center"
+		 * @see coffe.core.AlignType
+		 */		
+		[Inspectable(defaultValue="center", type="list", enumeration="left,center,right")]
 		public function set titleAlign(value:String):void
 		{
 			_titleAlign = value;
 			invalidate(InvalidationType.STATE);
 		}
 		
-		/**
-		 * 标题距离框体顶部的距离
-		 * @return 
-		 * 
-		 */
 		public function get titleTop():int
 		{
 			return _titleTop;
 		}
-
-		[Inspectable(type="Number",defaultValue=8)]	
+		/**
+		 *	标题距离弹出框顶部的距离 
+		 * @param value 骠骑距离弹出顶部的距离.默认值:5;
+		 * 
+		 */
+		[Inspectable(type="Number",defaultValue=5)]	
 		public function set titleTop(value:int):void
 		{
 			_titleTop = value;
 			invalidate(InvalidationType.STATE);
 		}	
 		
-		/**
-		 * 标题横向偏移量
-		 * @return 
-		 * 
-		 */
 		public function get titleLeft():int
 		{
 			return _titleLeft;
 		}
-	
+		/**
+		 * 标题距离弹出框左边的距离.(只在标题对齐方式不为"center"的时候有效) 
+		 * @param value 标题距离弹出框左边的距离.
+		 * 
+		 */	
 		[Inspectable(type="Number",defaultValue=10)]	
 		public function set titleLeft(value:int):void
 		{
@@ -480,12 +639,27 @@ package coffe.controls
 			invalidate(InvalidationType.STATE);
 		}
 
+		/**
+		 *	确定按钮的样式信息. 为一个包含按钮样式信息的Object对象
+		 * @param obj 确定按钮的样式信息.
+		 * @see coffe.controls.Button
+		 * @see coffe.controls.Button.DEFAULT_STYLE
+		 * @see coffe.core.UIComponent.setStyle()
+	 	 * @see coffe.core.UIComponent.combinStyle()
+		 */
 		public function set okStyle(obj:Object):void
 		{
 			_okStyle = obj;
 			invalidate(InvalidationType.STYLE);
 		}
-		
+		/**
+		 *	取消按钮的样式信息. 为一个包含按钮样式信息的Object对象
+		 * @param obj 确定按钮的样式信息.
+		 * @see coffe.controls.Button
+		 * @see coffe.controls.Button.DEFAULT_STYLE
+		 * @see coffe.core.UIComponent.setStyle()
+		 * @see coffe.core.UIComponent.combinStyle()
+		 */
 		public function set cancelStyle(obj:Object):void
 		{
 			_cancelStyle = obj;
@@ -496,7 +670,12 @@ package coffe.controls
 		{
 			return _closeBtnRight;
 		}
-
+		/**
+		 *	关闭按钮距离弹出框右边的距离. 
+		 * @param value 关闭按钮距离弹出框右边的距离.默认值10
+		 * 
+		 */
+		[Inspectable(type="Number",defaultValue=10)]	
 		public function set closeBtnRight(value:int):void
 		{
 			_closeBtnRight = value;
@@ -507,7 +686,12 @@ package coffe.controls
 		{
 			return _closeBtnTop;
 		}
-
+		/**
+		 *	关闭按钮距离弹出框顶部的距离. 
+		 * @param value 关闭按钮距离弹出框顶部的距离.默认值:0
+		 * 
+		 */
+		[Inspectable(type="Number",defaultValue=0)]	
 		public function set closeBtnTop(value:int):void
 		{
 			_closeBtnTop = value;
@@ -527,7 +711,11 @@ package coffe.controls
 			if(_background)return _background.height;
 			return super.height;
 		}
-
+		/**
+		 * 弹出框的背景.
+		 * @return 弹出框的背景.为一个显示对象.
+		 * 
+		 */
 		public function get background():DisplayObject
 		{
 			return _background;
@@ -537,22 +725,39 @@ package coffe.controls
 		{
 			return _dragRect;
 		}
-
+		/**
+		 *	弹出框的拖拽矩形.如果背景不是一个九宫格对象.可以通过设置此值来响应鼠标的拖拽.当鼠标按下时,如果鼠标在此矩形范围内并且dragEnable为true,则弹出框开始拖拽.
+		 * @param value 弹出框的拖拽矩形.
+		 * @see coffe.controls.Frame.dragEnable
+		 */
 		public function set dragRect(value:Rectangle):void
 		{
 			_dragRect = value;
 		}
 
+		/**
+		 *	弹出框的关闭按钮. 
+		 * @return 弹出框的关闭按钮.
+		 * 
+		 */
 		public function get closeButton():Button
 		{
 			return _closeBtn;
 		}
-		
+		/**
+		 *	弹出框的确定按钮. 
+		 * @return  弹出的确定按钮.
+		 * 
+		 */		
 		public function get okButton():Button
 		{
 			return _okBtn;
 		}
-		
+		/**
+		 *	弹出框的取消按钮. 
+		 * @return 弹出框的取消按钮.
+		 * 
+		 */		
 		public function get cancelButton():Button
 		{
 			return _cancelBtn;

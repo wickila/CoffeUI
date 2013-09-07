@@ -11,43 +11,21 @@ package coffe.controls {
     //  Events
     //--------------------------------------	
 	/**
-	 * Dispatched when the selected RadioButton instance in a group changes.
+	 * 当组内的选中目标发生改变时发出此事件
      *
-     * @includeExample examples/RadioButtonGroup.change.1.as -noswf
      * @eventType flash.events.Event.CHANGE
-     *
      * @langversion 3.0
      * @playerversion Flash 9.0.28.0
-	 *  
-	 *  @playerversion AIR 1.0
-	 *  @productversion Flash CS3
+	 *  @playerversion AIR 1.0	 *  @productversion Flash CS3
 	 */
 	[Event(name="change", type="flash.events.Event")]
 	
-	/**
-	 * Dispatched when a RadioButton instance is clicked.
-     *
-     * @eventType flash.events.MouseEvent.CLICK
-     *
-     * @langversion 3.0
-     * @playerversion Flash 9.0.28.0
-	 *  
-	 *  @playerversion AIR 1.0
-	 *  @productversion Flash CS3
-	 */
-	[Event(name="click", type="flash.events.MouseEvent")]
 
-
-    //--------------------------------------
-    //  Class description
-    //--------------------------------------
 	/**
-	 * The RadioButtonGroup class defines a group of RadioButton components 
-	 * to act as a single component. When one radio button is selected, no other
-	 * radio buttons from the same group can be selected.
-	 *
+	 * 单选组件的组.被添加进组内的单选组件同时只会有一个组件处于选择状态
+	 * 
+     * @see coffe.interfaces.ISelectable
      * @see RadioButton
-     * @see RadioButton#group RadioButton.group
      *
      * @includeExample examples/RadioButtonGroupExample.as -noswf
      *
@@ -59,37 +37,13 @@ package coffe.controls {
 	 */
 	public class SelectGroup extends EventDispatcher {
 		
-        /**
-         * @private
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-         */
 		private static var groups:Object;
-
-
-        /**
-         * @private
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-         */
 		private static var groupCount:uint = 0;
 
 		/**
-		 * Retrieves a reference to the specified radio button group.
+		 * 通过组名称获取一个组.如果已经存在一个此名字的组,则直接返回该组.如果不存在,则返回一个新建的组.
+		 * 一般不通过此类构造方法创建此类实例,而是通过此方法创建.
 		 *
-		 * @param name The name of the group for which to retrieve a reference.
-		 *
-         * @return A reference to the specified RadioButtonGroup.
-         *
-		 * @includeExample examples/RadioButtonGroup.getGroup.1.as -noswf
-		 *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-		 *  
-		 *  @playerversion AIR 1.0
-		 *  @productversion Flash CS3
 		 */
 		public static function getGroup(name:String):SelectGroup {
 			if (groups == null) { groups = {}; }
@@ -104,23 +58,11 @@ package coffe.controls {
 			return group;
 		}
 
-        /**
-         * @private
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-         */
 		private static function registerGroup(group:SelectGroup):void {
 			if(groups == null){groups = {}}
 			groups[group.name] = group;
 		}
 
-        /**
-         * @private
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-         */
 		private static function cleanUpGroups():void {
 			for (var n:String in groups) {
 				var group:SelectGroup = groups[n] as SelectGroup;
@@ -130,44 +72,16 @@ package coffe.controls {
 			}
 		}
 		
-        /**
-         * @private (protected)
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-         */
 		protected var _name:String;
 
-        /**
-         * @private (protected)
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-         */
 		protected var radioButtons:Array;
 
-        /**
-         * @private (protected)
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-         */
 		protected var _selection:ISelectable;
 
-		// Should be a private constructor, but not allowed in AS3, 
-		// so instead we'll make it work properly if you create a new 
-		// RadioButtonGroup manually.
 		/**
-		 * Creates a new RadioButtonGroup instance.  
-		 * This is usually done automatically when a radio button is instantiated.
-		 * 
-         * @param name The name of the radio button group.
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-		 *  
-		 *  @playerversion AIR 1.0
-		 *  @productversion Flash CS3
+		 * 创建一个名字为name的组.
+		 * 一般不直接调用此构造函数创建组的实例.而是调用getGroup来创建组实例
+		 * @see SelectGroup.getGroup()
 		 */
 		public function SelectGroup(name:String) {
 			_name = name;
@@ -176,33 +90,16 @@ package coffe.controls {
 		}
 
 		/**
-		 * Gets the instance name of the radio button.
-         *
-         * @default "RadioButtonGroup"
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-		 *  
-		 *  @playerversion AIR 1.0
-		 *  @productversion Flash CS3
+		 * @return 组名称
 		 */
 		public function get name():String {
 			return _name;
 		}
 
 		/**
-		 * Adds a radio button to the internal radio button array for use with 
-		 * radio button group indexing, which allows for the selection of a single radio button
-		 * in a group of radio buttons.  This method is used automatically by radio buttons, 
-		 * but can also be manually used to explicitly add a radio button to a group.
-		 *
-         * @param radioButton The RadioButton instance to be added to the current radio button group.
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-		 *  
-		 *  @playerversion AIR 1.0
-		 *  @productversion Flash CS3
+		 * 添加一个单选组件进组.如果此单选组件已经在另外一个组内了.则先从另外一个组内移除,再添加进此组
+		 * @param radioButton
+		 * 需要添加的单选组件
 		 */
 		public function addRadioButton(radioButton:ISelectable):void {
 			if (radioButton.groupName != name) {
@@ -214,15 +111,9 @@ package coffe.controls {
 		}
 
 		/**
-		 * Clears the RadioButton instance from the internal list of radio buttons.
-		 *
-         * @param radioButton The RadioButton instance to remove.
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-		 *  
-		 *  @playerversion AIR 1.0
-		 *  @productversion Flash CS3
+		 * 把单选组件从组内移除.如果此组的当前选中对象为此组件,则此组的当前选中对象会被设置为null
+		 * @param radioButton
+		 * 需要移除的组件
 		 */
 		public function removeRadioButton(radioButton:ISelectable):void {
 			var i:int = getRadioButtonIndex(radioButton);
@@ -233,26 +124,16 @@ package coffe.controls {
 		}
 		
 		/**
-		 * Gets or sets a reference to the radio button that is currently selected 
-         * from the radio button group.
-         *
-         * @includeExample examples/RadioButtonGroup.selection.1.as -noswf
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-		 *  
-		 *  @playerversion AIR 1.0
-		 *  @productversion Flash CS3
+		 * 获取当前的所选中的组件
 		 */
 		public function get selection():ISelectable {
 			return _selection;
 		}
 
 		/**
-         * @private (setter)
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
+		 * 设置此组的当前选中对象.如果设置成功,发出Event.Change事件
+		 * @param value
+		 * 将会被设置成选中状态的组件
 		 */
 		public function set selection(value:ISelectable):void {
 			if (_selection == value || value == null || getRadioButtonIndex(value) == -1) { return; }
@@ -261,16 +142,7 @@ package coffe.controls {
 		}
 		
 		/**
-         * Gets or sets the selected radio button's <code>value</code> property.
-         * If no radio button is currently selected, this property is <code>null</code>.
-         *
-         * @includeExample examples/RadioButtonGroup.selectedData.1.as -noswf
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-		 *  
-		 *  @playerversion AIR 1.0
-		 *  @productversion Flash CS3
+         * 获取当前所选中的单选组件的数据
 		 */
 		public function get selectedData():Object {
 			var s:ISelectable = _selection;
@@ -278,10 +150,7 @@ package coffe.controls {
 		}
 
 		/**
-         * @private (setter)
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
+         * 设置此组的当前选中数据
 		 */
 		public function set selectedData(value:Object):void {
 			for (var i:int = 0; i < radioButtons.length; i++) {
@@ -292,25 +161,17 @@ package coffe.controls {
 				}
 			}
 		}
-		
 
 		/**
-		 * Returns the index of the specified RadioButton instance.
-		 *
-		 * @param radioButton The RadioButton instance to locate in the current RadioButtonGroup.
-		 *
-         * @return The index of the specified RadioButton component, or -1 if the specified RadioButton was not found.
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-		 *  
-		 *  @playerversion AIR 1.0
-		 *  @productversion Flash CS3
+		 * 获取单选组件在组内的下标
+		 * @param radioButton 要获取下标的单选组件
+		 * @return 单选组件在组内的下标
+		 * 
 		 */
-		public function getRadioButtonIndex(radioButton:ISelectable):int {
+		public function getRadioButtonIndex(selectalbe:ISelectable):int {
 			for (var i:int = 0; i < radioButtons.length; i++) {
-				var rb:ISelectable = radioButtons[i] as ISelectable;
-				if(rb == radioButton) {
+				var s:ISelectable = radioButtons[i] as ISelectable;
+				if(s == selectalbe) {
 					return i;
 				}
 			}
@@ -318,35 +179,19 @@ package coffe.controls {
 		}
 
 		/**
-		 * Retrieves the RadioButton component at the specified index location.
-		 *
-         * @param index The index of the RadioButton component in the RadioButtonGroup component, 
-         *        where the index of the first component is 0. 
-		 *
-         * @return The specified RadioButton component.
-		 *
-         * @throws RangeError The specified index is less than 0 or greater than or equal to the length of the data provider.
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-		 *  
-		 *  @playerversion AIR 1.0
-		 *  @productversion Flash CS3
+		 *	通过下标获取组内的单选组件 
+		 * @param index 需要查询的下标
+		 * @return 下标对应的单选组件
+		 * 
 		 */
 		public function getRadioButtonAt(index:int):ISelectable {
 			return ISelectable(radioButtons[index]);
 		}
 
 		/**
-		 * Gets the number of radio buttons in this radio button group.
-         *
-         * @default 0
-         *
-         * @langversion 3.0
-         * @playerversion Flash 9.0.28.0
-		 *  
-		 *  @playerversion AIR 1.0
-		 *  @productversion Flash CS3
+		 *	获取组内单选组件的数量 
+		 * @return 组内单选组件的数量
+		 * 
 		 */
 		public function get numRadioButtons():int {
 			return radioButtons.length;

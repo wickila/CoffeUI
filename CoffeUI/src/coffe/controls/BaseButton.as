@@ -1,5 +1,6 @@
 package coffe.controls
 {
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.text.TextField;
@@ -9,10 +10,32 @@ package coffe.controls
 	import coffe.core.InvalidationType;
 	import coffe.core.UIComponent;
 	import coffe.events.ComponentEvent;
-	import coffe.interfaces.IDisposable;
 
-	public class BaseButton extends UIComponent implements IDisposable
+	/**
+	 *	所有按钮的基类.拥有三个鼠标状态:up(正常状态与鼠标弹起),over(鼠标划过),down(鼠标按下).
+	 * 	<br>可设置样式属性:
+	 * 	<table>
+	 * 	<tr><td>样式名称</td><td>描述</td><td>默认值</td></tr>
+	 * 	<tr><td>label</td><td>文本标签</td><td>"label"</td></tr>
+	 * 	<tr><td>textColor</td><td>文本标签颜色</td><td>0</td></tr>
+	 * 	<tr><td>labelAlign</td><td>文本标签对齐方式</td><td>"center"</td></tr>
+	 * 	<tr><td>labelGap</td><td>文本标签水平偏移</td><td>10</td></tr>
+	 * 	<tr><td>labelTopGap</td><td>文本标签垂直偏移</td><td>-2</td></tr>
+	 * 	</table>
+	 * 
+	 */
+	public class BaseButton extends UIComponent
 	{
+		/**
+		 *	组件的默认样式,每个组件都拥有自己单独的 DEFAULT_STYLE,并且在组件初始化的时候,会将DEFAULT_STYLE的样式信息赋值给组件.
+		 * 	<br>此默认样式信息是全局样式信息.所以可以在程序初始化的时候,设置组件的全局默认样式信息.
+		 * 	<br>默认为空
+		 * 	@see coffe.core.UIComponent.initDefaultStyle()
+		 * 	@see coffe.core.UIComponent.setStyle()
+		 * 	@see coffe.core.UIComponent.combinStyle()
+		 * 	@example
+		 * 	ObjectUtils.combineObject(ComboBox.DEFAULT_STYLE,{"listStyle":{"cellRender":"com.dragonlance.view.ComboxCellRender","backgroundStyle":"dl.asset.core.ComboxListBgAsset"},"buttonStyle":{"labelFormat":'{"color":"0xffffff","font":"宋体","size":12}',"labelFilter":""}});
+		 */
 		public static var DEFAULT_STYLE:Object = {
 		};
 		
@@ -34,6 +57,10 @@ package coffe.controls
 		protected var _clickFunction:Function;
 		protected var _clickFunctionArgs:Object;
 		
+		/**
+		 *	构造函数.创建实例后,默认设置buttonMode为true 
+		 * 
+		 */
 		public function BaseButton()
 		{
 			super();
@@ -55,6 +82,7 @@ package coffe.controls
 			addEventListener(MouseEvent.MOUSE_UP,mouseEventHandler,false,0,true);
 			addEventListener(MouseEvent.ROLL_OUT,mouseEventHandler,false,0,true);
 			addEventListener(MouseEvent.CLICK, onClickHandler, false, 0, true);
+			addEventListener(Event.REMOVED_FROM_STAGE,onRemoveFromState);
 		}
 		
 		override protected function removeEvents():void
@@ -64,6 +92,7 @@ package coffe.controls
 			removeEventListener(MouseEvent.MOUSE_DOWN,mouseEventHandler);
 			removeEventListener(MouseEvent.MOUSE_UP,mouseEventHandler);
 			removeEventListener(MouseEvent.ROLL_OUT,mouseEventHandler);
+			removeEventListener(Event.REMOVED_FROM_STAGE,onRemoveFromState);
 			pressTimer.removeEventListener(TimerEvent.TIMER,onPressTimer,false);
 			if(stage!=null)
 				stage.removeEventListener(MouseEvent.MOUSE_UP,onStageMouseUp);
@@ -92,6 +121,11 @@ package coffe.controls
 			}
 		}
 		
+		/**
+		 *	设置鼠标状态 
+		 * @param state 需要设置的鼠标状态.可选值为"up","down","over"
+		 * 
+		 */
 		public function setMouseState(state:String):void {
 			if (_mouseState == state) { return; }
 			_mouseState = state;
@@ -117,6 +151,11 @@ package coffe.controls
 		}
 		
 		protected function onStageMouseUp(event:MouseEvent):void
+		{
+			buttonUp();
+		}
+		
+		protected function onRemoveFromState(event:Event):void
 		{
 			buttonUp();
 		}
@@ -151,12 +190,20 @@ package coffe.controls
 			pressTimer.reset();
 		}
 		
+		/**
+		 *	按钮标签,默认为"label" 
+		 * @param value 需要设置的按钮标签
+		 * 
+		 */
 		public function set label(value:String):void
 		{
 			_label = value;
 			invalidate(InvalidationType.LABEL);
 		}
-		
+		/**
+		 * 按钮文本颜色.(如果同时设置了标签的textformat,则此属性会覆盖textformat的颜色值)
+		 * @param value 按钮文本颜色
+		 */
 		[Inspectable(type="Color",name="文本颜色",defaultValue=0)]
 		public function set textColor(value:uint):void
 		{
@@ -182,13 +229,18 @@ package coffe.controls
 			super.enable = value;
 			super.buttonMode = _buttonMode && enable;
 		}
+		/**
+		 *	标签水平偏移距离 
+		 */
 		[Inspectable(defaultValue=10, name="标签间隔", type="Number")]
 		public function set labelGap(value:int):void
 		{
 			_labelGap = value;
 			invalidate(InvalidationType.LABEL);
 		}
-		
+		/**
+		 *	标签垂直偏移距离.(按钮标签垂直居中后,将加上垂直偏移距离以校正标签垂直位置) 
+		 */
 		[Inspectable(defaultValue=-2, name="标签顶部间隔", type="Number")]
 		public function set labelTopGap(value:int):void
 		{
@@ -196,6 +248,12 @@ package coffe.controls
 			invalidate(InvalidationType.LABEL);
 		}
 		
+		/**
+		 *	点击回调函数,通常用于按钮点击发出声音等按钮同意行为,可在DEFAULT_STYLE里面全局设置统一的按钮行为 
+		 * @return 按钮点击回调函数
+		 * @see coffe.controls.BaseButton.DEFAULT_STYLE
+		 * @see coffe.controls.BaseButton.clickFunctionArgs
+		 */
 		public function get clickFunction():Function
 		{
 			return _clickFunction;
@@ -206,6 +264,13 @@ package coffe.controls
 			_clickFunction = value;
 		}
 		
+		/**
+		 *	点击回调函数的参数. 可在DEFAULT_STYLE里面全局设置统一的按钮行为 
+		 * @return 点击回调函数的参数
+		 * @see coffe.controls.BaseButton.DEFAULT_STYLE
+		 * @see coffe.controls.BaseButton.clickFunction
+		 * 
+		 */
 		public function get clickFunctionArgs():Object
 		{
 			return _clickFunctionArgs;
@@ -216,6 +281,11 @@ package coffe.controls
 			_clickFunctionArgs = value;
 		}
 
+		/**
+		 *	是否重复发出ComponentEvent.BUTTON_DOWN事件(用于滚动条的上下按钮等)
+		 * @return 是否重复发出ComponentEvent.BUTTON_DOWN事件 
+		 * 
+		 */
 		public function get autoRepeat():Boolean
 		{
 			return _autoRepeat;
@@ -229,6 +299,8 @@ package coffe.controls
 		override public function dispose():void
 		{
 			super.dispose();
+			_clickFunction = null;
+			_clickFunctionArgs=null;
 			disposeObject(_labelTF);
 			_labelTF = null;
 		}

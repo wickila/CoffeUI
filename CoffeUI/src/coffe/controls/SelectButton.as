@@ -10,12 +10,48 @@ package coffe.controls
 	import coffe.core.InvalidationType;
 	import coffe.interfaces.ISelectable;
 	/**
-	 *	可选择按钮，分选中与不选中两种状态 
-	 * @author zs
-	 * 
+	 *	可选择按钮.具有选中与未选中两种状态.两种状态下的背景,标签,标签样式,标签发光滤镜都可以定义.此组件是Radiobutton的扩充,同样会被添加进一个组,并且组内同时只有一个可选择按钮处于选择状态.
+	 * 	<br>样式属性:
+	 * 	<table width="100%">
+	 * 	<tr><td>样式名称</td><td>描述</td><td>默认值</td></tr>
+	 * 	<tr><td>selectedLabel</td><td>选择状态文本标签值</td><td>"Selected"</td></tr>
+	 * 	<tr><td>unSelectedLabel</td><td>未选择状态文本标签值</td><td>"unSelectedLabel"</td></tr>
+	 * 	<tr><td>labelGap</td><td>标签水平偏移距离</td><td>2</td></tr>
+	 * 	<tr><td>labelTopGap</td><td>标签垂直偏移距离</td><td>-2</td></tr>
+	 * 	<tr><td>selectedBgStyle</td><td>选中状态背景样式</td><td>CheckBoxSelectOverSkin</td></tr>
+	 * 	<tr><td>unSelectedBgStyle</td><td>未选中状态背景样式</td><td>CheckBoxUnSelectOverSkin</td></tr>
+	 * 	<tr><td>selectedFormat</td><td>选择装袋标签字体样式</td><td>'{"color":"0x000000","font":"Arial","size":11}'</td></tr>
+	 * 	<tr><td>unSelectedFormat</td><td>未选择装袋标签字体样式</td><td>'{"color":"0x000000","font":"Arial","size":11}'</td></tr>
+	 * 	<tr><td>selectedFilter</td><td>选择状态标签发光滤镜</td><td>'{"color":"0xffffff","alpha":1,"blurX":2,<br>"blurY":2,"strength":5,"quality":1,<br>"inner":false,"knockout":false}'</td></tr>
+	 * 	<tr><td>unSelectedFilter</td><td>未选择状态标签发光滤镜</td><td>'{"color":"0xffffff","alpha":1,"blurX":2,<br>"blurY":2,"strength":5,"quality":1,<br>"inner":false,"knockout":false}'</td></tr>
+	 * 	</table>
+	 * 	@see coffe.controls.SelectGroup
 	 */
 	public class SelectButton extends BaseButton implements ISelectable
 	{
+		/**
+		 *	组件的全局默认样式,每个组件都拥有自己单独的 DEFAULT_STYLE,并且在组件初始化的时候,会将DEFAULT_STYLE的样式信息赋值给组件.
+		 * 	<br>此默认样式信息是全局样式信息.所以可以在程序初始化的时候,设置组件的全局默认样式信息.
+		 * 	<br>可选择按钮默认样式属性:
+		 * 	<table width="100%">
+		 * 	<tr><td>样式名称</td><td>描述</td><td>默认值</td></tr>
+		 * 	<tr><td>selectedLabel</td><td>选择状态文本标签值</td><td>"Selected"</td></tr>
+		 * 	<tr><td>unSelectedLabel</td><td>未选择状态文本标签值</td><td>"unSelectedLabel"</td></tr>
+		 * 	<tr><td>labelGap</td><td>标签水平偏移距离</td><td>2</td></tr>
+		 * 	<tr><td>textColor</td><td>标签文本颜色</td><td>0</td></tr>
+		 * 	<tr><td>selectedBgStyle</td><td>选中状态背景样式</td><td>CheckBoxSelectOverSkin</td></tr>
+		 * 	<tr><td>unSelectedBgStyle</td><td>未选中状态背景样式</td><td>CheckBoxUnSelectOverSkin</td></tr>
+		 * 	<tr><td>selectedFormat</td><td>选择装袋标签字体样式</td><td>'{"color":"0x000000","font":"Arial","size":11}'</td></tr>
+		 * 	<tr><td>unSelectedFormat</td><td>未选择装袋标签字体样式</td><td>'{"color":"0x000000","font":"Arial","size":11}'</td></tr>
+		 * 	<tr><td>selectedFilter</td><td>选择状态标签发光滤镜</td><td>'{"color":"0xffffff","alpha":1,"blurX":2,<br>"blurY":2,"strength":5,"quality":1,<br>"inner":false,"knockout":false}'</td></tr>
+		 * 	<tr><td>unSelectedFilter</td><td>未选择状态标签发光滤镜</td><td>'{"color":"0xffffff","alpha":1,"blurX":2,<br>"blurY":2,"strength":5,"quality":1,<br>"inner":false,"knockout":false}'</td></tr>
+		 * 	</table>
+		 * 	@see coffe.core.UIComponent.initDefaultStyle()
+		 * 	@see coffe.core.UIComponent.setStyle()
+		 * 	@see coffe.core.UIComponent.combinStyle()
+		 * 	@example
+		 * 	ObjectUtils.combineObject(ComboBox.DEFAULT_STYLE,{"listStyle":{"cellRender":"com.dragonlance.view.ComboxCellRender","backgroundStyle":"dl.asset.core.ComboxListBgAsset"},"buttonStyle":{"labelFormat":'{"color":"0xffffff","font":"宋体","size":12}',"labelFilter":""}});
+		 */
 		public static var DEFAULT_STYLE:Object = {
 			selectedBgStyle:"SelectButtonSelectSkin",
 			unSelectedBgStyle:"SelectButtonUnSelectSkin",
@@ -41,6 +77,10 @@ package coffe.controls
 		protected var _unSelectedFormat:TextFormat;
 		protected var _selectedFilter:GlowFilter;
 		protected var _unSelectedFilter:GlowFilter;
+		/**
+		 *	创建一个新的可选择按钮,并且默认添加进"SelectButtonGroup"组内.
+		 * 
+		 */
 		public function SelectButton()
 		{
 			super();
@@ -73,41 +113,66 @@ package coffe.controls
 			selected = !_selected;
 			dispatchEvent(new Event(Event.CHANGE));
 		}
-		
+		/**
+		 *	选中状态背景样式. 一个显示对象类的类名.
+		 * @param value 选中状态背景样式.默认值:SelectButtonSelectSkin
+		 * 
+		 */		
 		[Inspectable(type="String",name="选中样式",defaultValue="SelectButtonSelectSkin")]
 		public function set selectedBgStyle(value:String):void
 		{
 			_selectedBgStyle = value;
 			invalidate(InvalidationType.STYLE);
 		}
-		
+		/**
+		 *	未选择状态背景样式.一个显示对象类的类名. 
+		 * @param value 未选择状态背景样式.默认值:SelectButtonUnSelectSkin
+		 * 
+		 */		
 		[Inspectable(type="String",name="未选中样式",defaultValue="SelectButtonUnSelectSkin")]
 		public function set unSelectedBgStyle(value:String):void
 		{
 			_unSelectedBgStyle = value;
 			invalidate(InvalidationType.STYLE);
 		}
-		
+		/**
+		 *	选中状态标签文本. 
+		 * @param value 选中状态标签文本.默认值:Selected
+		 * 
+		 */		
 		[Inspectable(type="String",name="选中标签",defaultValue="Selected")]
 		public function set selectedLabel(value:String):void
 		{
 			_selectedLable= value;
 			invalidate(InvalidationType.LABEL);
 		}
-		
+		/**
+		 *	未选中状态标签文本. 
+		 * @param value 未选中标签文本.默认值:UnSelected
+		 * 
+		 */		
 		[Inspectable(type="String",name="未选中标签",defaultValue="UnSelected")]
 		public function set unSelectedLabel(value:String):void
 		{
 			_unSelectedLable = value;
 			invalidate(InvalidationType.LABEL);
 		}
-		[Inspectable(defaultValue=0, name="标签间隔", type="Number")]
+		/**
+		 *	标签距离组件左边的间隔距离. 
+		 * @param value 标签距离组件左边的间隔距离.默认值:10
+		 * 
+		 */		
+		[Inspectable(defaultValue=10, name="标签间隔", type="Number")]
 		override public function set labelGap(value:int):void
 		{
 			_labelGap = value;
 			invalidate(InvalidationType.LABEL);
 		}
-		
+		/**
+		 *	选中状态标签文本样式. 为一个包含文本样式信息的json格式字符串.
+		 * @param value 选中状态标签文本样式.默认值:'{"color":"0x000000","font":"Arial","size":11}'
+		 * @see flash.text.TextFormat
+		 */		
 		[Inspectable(type="String",name="选中标签样式",defaultValue='{"color":"0x000000","font":"Arial","size":11}')]
 		public function set selectedFormat(value:String):void
 		{
@@ -123,7 +188,11 @@ package coffe.controls
 				}
 			}
 		}
-		
+		/**
+		 *	未选中状态标签文本样式. 为一个包含文本样式信息的json格式字符串.
+		 * @param value 未选中状态标签文本样式.默认值:'{"color":"0x000000","font":"Arial","size":11}'
+		 * @see flash.text.TextFormat
+		 */	
 		[Inspectable(type="String",name="未选中标签样式",defaultValue='{"color":"0x000000","font":"Arial","size":11}')]
 		public function set unSelectedFormat(value:String):void
 		{
@@ -135,11 +204,15 @@ package coffe.controls
 					invalidate(InvalidationType.LABEL);
 				}catch(e:Error)
 				{
-					trace("未选中选中标签格式错误",_unSelectedFormat);
+					trace("未选中标签格式错误",_unSelectedFormat);
 				}
 			}
 		}
-		
+		/**
+		 *	选中状态标签发光滤镜. 为一个包含发光滤镜信息的json格式字符串.
+		 * @param value 选中状态标签发光滤镜.默认值:'{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}'
+		 * @see flash.filters.GlowFilter
+		 */	
 		[Inspectable(type="String",name="选中标签滤镜",defaultValue='{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}')]
 		public function set selectedFilter(value:String):void
 		{
@@ -156,7 +229,11 @@ package coffe.controls
 				}
 			}
 		}
-		
+		/**
+		 *	未选中状态标签发光滤镜. 为一个包含发光滤镜信息的json格式字符串.
+		 * @param value 未选中状态标签发光滤镜.默认值:'{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}'
+		 * @see flash.filters.GlowFilter
+		 */
 		[Inspectable(type="String",name="未选中标签滤镜",defaultValue='{"color":"0xffffff","alpha":1,"blurX":2,"blurY":2,"strength":5,"quality":1,"inner":false,"knockout":false}')]
 		public function set unSelectedFilter(value:String):void
 		{

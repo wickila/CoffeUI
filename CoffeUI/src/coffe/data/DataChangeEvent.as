@@ -3,6 +3,10 @@ package coffe.data {
 
 	import flash.events.Event;
 
+	/**
+	 *	DataProvider数据集合发生改变的时候发出的事件.
+	 * 	@see coffe.data.DataProvider
+	 */
 	public class DataChangeEvent extends Event {
 		public static const DATA_CHANGE:String = "dataChange";
 		

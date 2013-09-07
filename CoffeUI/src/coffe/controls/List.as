@@ -11,13 +11,48 @@ package coffe.controls
 	import coffe.events.ListEvent;
 	import coffe.events.ScrollEvent;
 	import coffe.interfaces.ICellRender;
+	
 	/**
-	 *	列表 
-	 * @author wicki
-	 * 
+	 * 列表的当前选中数据发生改变时发出此事件
+	 *
+	 * @eventType flash.events.Event.CHANGE
+	 * @langversion 3.0
+	 * @playerversion Flash 9.0.28.0
+	 *  @playerversion AIR 1.0
+	 *  @productversion Flash CS3
+	 */
+	[Event(name="selectedDataChange", type="coffe.events.ListEvent")]
+	
+	/**
+	 *	列表.一个可滚动的单选列表框.列表的显示需要一个DataProvider数据.
+	 * 	此组件支持自定义单元格渲染器样式.只需创建一个实现ICellRender的渲染器类,并且指定为此组件的渲染器就可以了.
+	 * 	<br>可设置样式
+	 * 	<table width="100%">
+	 *	<tr><td>样式名称</td><td>描述</td><td>默认值</td></tr>
+	 * 	<tr><td>cellRender</td><td>渲染器样式</td><td>coffe.controls.CellRender</td></tr>
+	 * 	<tr><td>labelField</td><td>单元格呈现的数据属性名称</td><td>"label"</td></tr>
+	 * 	</table>
+	 * 	@see coffe.data.DataProvider
+	 * 	@see coffe.interfaces.ICellRender
 	 */	
 	public class List extends ScrollPane
 	{
+		/**
+		 *	组件的全局默认样式.每个组件都拥有自己单独的 DEFAULT_STYLE,并且在组件初始化的时候,会将DEFAULT_STYLE的样式信息赋值给组件.
+		 * 	<br>此默认样式信息是全局样式信息.所以可以在程序初始化的时候,设置组件的全局默认样式信息.
+		 * 	<br>默认列表样式:
+		 * 	<table width="100%">
+		 * 	<tr><td>样式名称</td><td>描述</td><td>默认值</td></tr>
+		 * 	<tr><td>cellRender</td><td>渲染器样式</td><td>coffe.controls.CellRender</td></tr>
+	 	 * 	<tr><td>labelField</td><td>单元格呈现的数据属性名称</td><td>"label"</td></tr>
+		 * 	</table>
+		 * 	@see coffe.controls.ScrollPane.DEFAULT_STYLE
+		 * 	@see coffe.core.UIComponent.initDefaultStyle()
+		 * 	@see coffe.core.UIComponent.setStyle()
+		 * 	@see coffe.core.UIComponent.combinStyle()
+		 * 	@example
+		 * 	ObjectUtils.combineObject(ComboBox.DEFAULT_STYLE,{"listStyle":{"cellRender":"com.dragonlance.view.ComboxCellRender","backgroundStyle":"dl.asset.core.ComboxListBgAsset"},"buttonStyle":{"labelFormat":'{"color":"0xffffff","font":"宋体","size":12}',"labelFilter":""}});
+		 */
 		public static var DEFAULT_STYLE:Object = {
 			cellRender:"coffe.controls.CellRender",
 			labelField:"label"
@@ -126,7 +161,7 @@ package coffe.controls
 		}
 		
 		/**
-		 *	@description 根据单元格高与列表的高，生成要用到的所有单元格，单元格数量最多为列表可以显示的单元格数+2 
+		 *	根据单元格高与列表的高，生成要用到的所有单元格，单元格数量最多为列表可以显示的单元格数+2 
 		 * 
 		 */		
 		private function createCells():void
@@ -159,6 +194,11 @@ package coffe.controls
 				dispatchEvent(new ListEvent(ListEvent.SELECTED_DATA_CHANGE));
 			}
 		}
+		/**
+		 *	需要组件呈现的DataProvider数据集合. 
+		 * @param value 需要组件呈现的DataProvider数据集合. 
+		 * @see coffe.data.DataProvider
+		 */		
 		[Collection(collectionClass="coffe.data.DataProvider", collectionItem="coffe.data.SimpleCollectionItem", identifier="item")]
 		public function set data(value:DataProvider):void
 		{
@@ -184,6 +224,11 @@ package coffe.controls
 			return _selectedData;
 		}
 		
+		/**
+		 *	当前组件选中的数据. 
+		 * @param value 当前组件选中的数据.如果当前选中的数据发生改变.则发出ListEvent.SELECTED_DATA_CHANGE事件
+		 * @see coffe.events.ListEvent.SELECTED_DATA_CHANGE
+		 */
 		public function set selectedData(value:Object):void
 		{
 			if(_selectedData == value)return;
@@ -195,6 +240,12 @@ package coffe.controls
 			dispatchEvent(new ListEvent(ListEvent.SELECTED_DATA_CHANGE));
 		}
 
+		/**
+		 *	单元格呈现的渲染器.为一个实现ICellRender的渲染器类名. 
+		 * @param value 单元格呈现的渲染器.默认值:coffe.controls.CellRender
+		 * @see coffe.interfaces.ICellRender
+		 * @see coffe.controls.CellRender
+		 */
 		public function set cellRender(value:String):void
 		{
 			if(_cellRender == value)return;
@@ -213,7 +264,11 @@ package coffe.controls
 		{
 			return _labelField;
 		}
-
+		/**
+		 *	列表需要呈现的数据属性名.如果是自定义单元格渲染器.则此字段无效. 
+		 * @param value 列表需要呈现的数据属性名.
+		 * @see coffe.controls.CellRender.labelField
+		 */
 		public function set labelField(value:String):void
 		{
 			_labelField = value;
@@ -237,28 +292,30 @@ package coffe.controls
 			_data = null;
 		}
 
-		/**
-		 *	cell的宽度是否根据list的宽度自动调整 
-		 */
 		public function get cellAutoSize():Boolean
 		{
 			return _cellAutoSize;
 		}
-
+		/**
+		 *	单元格是否根据列表的宽度自动调整宽度. 
+		 * @param value 单元格是否根据列表的宽度自动调整宽度.默认为true
+		 * 
+		 */
+		[Inspectable(type="Boolean",name="单元格是否与列表等宽",defaultValue=true)]
 		public function set cellAutoSize(value:Boolean):void
 		{
 			_cellAutoSize = value;
 		}
-		/**
-		 *	单元格之间的间隔 
-		 * @return 
-		 * 
-		 */		
 		public function get gap():Number
 		{
 			return _gap;
 		}
-
+		/**
+		 *	单元格之间的垂直间隔距离. 
+		 * @param value 单元格之间的垂直间隔距离.默认值:2
+		 * 
+		 */
+		[Inspectable(type="Number",name="单元格垂直间隔",defaultValue=2)]
 		public function set gap(value:Number):void
 		{
 			_gap = value;

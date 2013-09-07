@@ -16,9 +16,30 @@ package coffe.core
 	import coffe.events.ComponentEvent;
 	import coffe.interfaces.IDisposable;
 	
-	public class UIComponent extends Sprite
+	/**
+	 * 
+	 * 所有UI组件的基类,继承自Sprite.实现IDisposable的接口
+	 * @see coffe.interfaces.IDisposable
+	 */
+	public class UIComponent extends Sprite implements IDisposable
 	{
+		/**
+		 *	组件的默认样式,每个组件都拥有自己单独的 DEFAULT_STYLE,并且在组件初始化的时候,会将DEFAULT_STYLE的样式信息赋值给组件.
+		 * 	<br>此默认样式信息是全局样式信息.所以可以在程序初始化的时候,设置组件的全局默认样式信息.
+		 * 	@see coffe.core.UIComponent.initDefaultStyle()
+		 * 	@see coffe.core.UIComponent.setStyle()
+		 * 	@see coffe.core.UIComponent.combinStyle()
+		 */
+		public static var DEFAULT_STYLE:Object = {
+		};
+		
+		/**
+		 *	高光滤镜.一般用于鼠标划过组件的时候 
+		 */
 		public static const GRAY_FILTER:ColorMatrixFilter = new ColorMatrixFilter([0.3086, 0.6094, 0.082, 0, 0, 0.3086, 0.6094, 0.082, 0, 0, 0.3086, 0.6094, 0.082, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1]);
+		/**
+		 *	灰度滤镜.一般用于组件不可用的时候 
+		 */
 		public static const LIGHT_FILTER:ColorMatrixFilter = new ColorMatrixFilter([1,0,0,0,25,0,1,0,0,25,0,0,1,0,25,0,0,0,1,0]);
 		
 		private var _enable:Boolean=true;
@@ -31,6 +52,10 @@ package coffe.core
 		protected var _scaleX:Number=1;
 		protected var _scaleY:Number=1;
 		
+		/**
+		 *	创建一个组件,组件创建后,将初始化默认皮肤,初始化事件,最后将所有组件属性标记为已改变.
+		 * 	但是组件不会立即绘制,除非组件被添加到舞台,或者显示调用drawNow方法 
+		 */
 		public function UIComponent()
 		{
 			super();
@@ -43,42 +68,52 @@ package coffe.core
 			invalidate(InvalidationType.ALL);
 		}
 		/**
-		 * 初始化样式 
-		 * 
+		 * 初始化样式,将样式信息设置为组件对应的默认样式信息
+		 * @see coffe.core.UIComponent.setStyle()
+		 * @see coffe.core.UIComponent.DEFAULT_STYLE
 		 */		
 		protected function initDefaultStyle():void
 		{
 			
 		}
 		/**
-		 *	重绘组件 
-		 * 
+		 *	绘制组件.由子类实现
+		 * 	绘制完成后,将调用drawLayout方法调整组件布局
 		 */		
 		protected function draw():void
 		{
 			drawLayout();
 		}
 		/**
-		 *	重绘组件布局 
-		 * 
+		 *	调整组件布局 
+		 * 	由子类实现
 		 */		
 		public function drawLayout():void
 		{
 			
 		}
 		
+		/**
+		 *	注册组件事件 
+		 * 
+		 */
 		protected function initEvents():void
 		{
 			addEventListener(ComponentEvent.CREATION_COMPLETE,onCreationComplete);
 		}
 		
+		/**
+		 *	移除组件事件 
+		 * 
+		 */
 		protected function removeEvents():void
 		{
 			removeEventListener(ComponentEvent.CREATION_COMPLETE,onCreationComplete);
 		}
 		/**
 		 *	组件初始化完成，把Flash cs里面的资源尺寸重设
-		 * @param event
+		 * 此方法只有在Flash cs的预览模式下有用,平时使用的时候不用
+		 * @param event 组件初始化完成后发出的事件
 		 * 
 		 */		
 		protected function onCreationComplete(event:Event):void
@@ -90,7 +125,8 @@ package coffe.core
 			removeEventListener(ComponentEvent.CREATION_COMPLETE,onCreationComplete);
 		}
 		/**
-		 *	需要的时候，在每个帧周期刷新组件 
+		 *	当组件属性改变时,此方法会在进入帧周期(EnterFrame)或者组件被添加到舞台的时候调用
+		 * 	此方法将调用draw方法 
 		 * 
 		 */		
 		protected function update():void
@@ -104,7 +140,8 @@ package coffe.core
 		}
 		/**
 		 *	标记已更新的属性，之后等待更新组件 
-		 * @param property
+		 * @param property 改变的属性名称
+		 * @see coffe.core.InvalidationType
 		 * 
 		 */		
 		public function invalidate(property:String=InvalidationType.ALL):void {
@@ -113,9 +150,9 @@ package coffe.core
 		}
 		/**
 		 * 
-		 * @param property
-		 * @param properties
-		 * @return 属性是否被重设过
+		 * @param property 属性名称
+		 * @param properties 更多的属性名称
+		 * @return 属性是否改变过.
 		 * 
 		 */		
 		protected function isInvalid(property:String,...properties:Array):Boolean {
@@ -126,6 +163,10 @@ package coffe.core
 			return false
 		}
 		
+		/**
+		 *	重置改变的属性集合(将所有属性标记为未改变),在所有属性改变都已经被提交处理后调用. 
+		 * 
+		 */
 		protected function validate():void {
 			_invalidHash = {};
 		}
@@ -135,6 +176,13 @@ package coffe.core
 			return _enable;
 		}
 		
+		/**
+		 *	 
+		 * @param value 组件是否可用.
+		 * 如果设置为false,则组件的所有鼠标事件全部被禁用,一般情况下会组件将应用灰度滤镜
+		 * 如果设置为true,则组件响应所有鼠标事件,并且会取消组件的所有滤镜
+		 * 
+		 */		
 		[Inspectable(type="Boolean",name="是否可用",defaultValue=true)]
 		public function set enable(value:Boolean):void
 		{
@@ -150,9 +198,9 @@ package coffe.core
 		}
 		
 		/**
-		 * 
+		 * 延迟调用函数（一般在渲染前调用，目标函数每个帧周期内只会调用一次，不会重复调用）
 		 * @param fn 需要调用的函数
-		 * @description 延迟调用（一般在渲染前调用，目标函数每个帧周期内只会调用一次，不会重复调用）
+		 * 
 		 */		
 		protected function callLater(fn:Function):void {
 			if(inCallLaterPhase) { return; }
@@ -207,6 +255,12 @@ package coffe.core
 			inCallLaterPhase = false;
 		}
 		
+		/**
+		 * 利用反射机制,根据className返回对应的实例.
+		 * @param style 想要获得的资源的类名
+		 * @return style相对应的显示对象实例.如果在程序域里面没找到对应的类,则返回null
+		 * 
+		 */
 		protected function getDisplayObjectInstance(style:String):DisplayObject {
 			var classDef:Object = null;
 			try {
@@ -234,8 +288,8 @@ package coffe.core
 			return instance as DisplayObject;
 		}
 		/**
-		 * 设置组件样式信息
-		 * @param style
+		 * 设置组件样式信息.此方法会循环style里面的每个属性,然后赋值给组件对应的样式属性.
+		 * @param style 样式信息
 		 * 
 		 */		
 		public function setStyle(style:Object):void
@@ -247,7 +301,7 @@ package coffe.core
 		}
 		/**
 		 *	立即重绘组件 
-		 * 
+		 * 	并且将所有改变的属性标记为为改变
 		 */		
 		public function drawNow():void
 		{
@@ -255,18 +309,25 @@ package coffe.core
 			delete(callLaterMethods[draw]);
 			validate();
 		}
-		
+		/**
+		 *	设置组件的尺寸信息(常用)
+		 * @param width 组件宽
+		 * @param height 组件高
+		 */		
 		public function setSize(width:Number, height:Number):void {
 			this.width = width;
 			this.height = height;
 			invalidate(InvalidationType.SIZE);
-			dispatchEvent(new ComponentEvent(ComponentEvent.RESIZE, false));
 		}
 		
+		/**
+		 *	设置组件位置信息
+		 * @param x 组件的x坐标
+		 * @param y	组件的y坐标
+		 */
 		public function move(x:Number,y:Number):void {
 			super.x = Math.round(x);
 			super.y = Math.round(y);
-			dispatchEvent(new ComponentEvent(ComponentEvent.MOVE));
 		}
 		
 		override public function set height(value:Number):void
@@ -286,7 +347,7 @@ package coffe.core
 		
 		override public function get height():Number{return isNaN(_height)?super.height:_height}
 		/**
-		 *	警告:此方法已被重写，只用于预览模式。平时代码中不建议使用，而用setScaleX代替   
+		 *	警告:此方法已被重写，只用于预览模式。平时代码中不建议使用，而用setScaleX,getScaleX代替   
 		 * @param value
 		 * 
 		 */		
@@ -295,7 +356,7 @@ package coffe.core
 			setSize(width*value,height);
 		}
 		/**
-		 *	警告:此方法已被重写，只用于预览模式。平时代码中不建议使用，而用setScaleY代替  
+		 *	警告:此方法已被重写，只用于预览模式。平时代码中不建议使用，而用setScaleY,getScaleY代替  
 		 * @param value
 		 * 
 		 */		
@@ -344,6 +405,10 @@ package coffe.core
 			return (className == "fl.livepreview::LivePreviewParent");	
 		}
 		
+		/**
+		 *	移除组件内的所有显示对象.此方法不能代替dispose 
+		 * 
+		 */
 		protected function removeAllChildren():void
 		{
 			while(numChildren>0)
@@ -352,6 +417,12 @@ package coffe.core
 			}
 		}
 		
+		/**
+		 *	合并两个样式信息.如果有重复的样式信息属性,目标样式信息的属性将被源样式信息的属性覆盖
+		 * @param target 目标样式信息:将要被合并的目标样式信息
+		 * @param source 源样式信息:用来合并的样式信息
+		 * 
+		 */
 		protected function combinStyle(target:Object,source:Object):void
 		{
 			for(var property:String in source)
@@ -360,6 +431,10 @@ package coffe.core
 			}
 		}
 		
+		/**
+		 *	销毁组件 
+		 * 
+		 */
 		public function dispose():void
 		{
 			removeEvents();
@@ -369,6 +444,11 @@ package coffe.core
 				parent.removeChild(this);
 		}
 		
+		/**
+		 *	快捷销毁一个显示对象 
+		 * @param obj 需要销毁的显示对象
+		 * @see coffe.interfaces.IDisposable
+		 */
 		public static function disposeObject(obj:DisplayObject):void
 		{
 			if(obj==null)return;
