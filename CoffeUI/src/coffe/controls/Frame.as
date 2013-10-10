@@ -525,7 +525,8 @@ package coffe.controls
 			disposeObject(_okBtn);_okBtn = null;
 			disposeObject(_cancelBtn);_cancelBtn = null;
 			disposeObject(_titleTF);_titleTF = null;
-			disposeObject(_content);_content = null;
+			if(_content&&contains(_content))removeChild(_content);
+			_content=null;
 			super.dispose();
 		}
 		/**

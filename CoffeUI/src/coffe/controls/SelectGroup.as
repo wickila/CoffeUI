@@ -50,10 +50,6 @@ package coffe.controls {
 			var group:SelectGroup = groups[name] as SelectGroup;
 			if (group == null) {
 				group = new SelectGroup(name);
-				// every so often, we should clean up old groups:
-				if ((++groupCount)%20 == 0) {
-					cleanUpGroups();
-				}
 			}
 			return group;
 		}
@@ -61,15 +57,6 @@ package coffe.controls {
 		private static function registerGroup(group:SelectGroup):void {
 			if(groups == null){groups = {}}
 			groups[group.name] = group;
-		}
-
-		private static function cleanUpGroups():void {
-			for (var n:String in groups) {
-				var group:SelectGroup = groups[n] as SelectGroup;
-				if (group.radioButtons.length == 0) {
-					delete(groups[n]);
-				}
-			}
 		}
 		
 		protected var _name:String;

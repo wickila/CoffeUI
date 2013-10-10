@@ -82,7 +82,7 @@ package coffe.controls
 			addEventListener(MouseEvent.MOUSE_UP,mouseEventHandler,false,0,true);
 			addEventListener(MouseEvent.ROLL_OUT,mouseEventHandler,false,0,true);
 			addEventListener(MouseEvent.CLICK, onClickHandler, false, 0, true);
-			addEventListener(Event.REMOVED_FROM_STAGE,onRemoveFromState);
+			addEventListener(Event.REMOVED_FROM_STAGE,onRemoveFromStage);
 		}
 		
 		override protected function removeEvents():void
@@ -92,7 +92,7 @@ package coffe.controls
 			removeEventListener(MouseEvent.MOUSE_DOWN,mouseEventHandler);
 			removeEventListener(MouseEvent.MOUSE_UP,mouseEventHandler);
 			removeEventListener(MouseEvent.ROLL_OUT,mouseEventHandler);
-			removeEventListener(Event.REMOVED_FROM_STAGE,onRemoveFromState);
+			removeEventListener(Event.REMOVED_FROM_STAGE,onRemoveFromStage);
 			pressTimer.removeEventListener(TimerEvent.TIMER,onPressTimer,false);
 			if(stage!=null)
 				stage.removeEventListener(MouseEvent.MOUSE_UP,onStageMouseUp);
@@ -132,12 +132,14 @@ package coffe.controls
 			invalidate(InvalidationType.STATE);
 		}
 		
+		private var _stageHasListen:Boolean=false;//舞台是否监听了鼠标弹起事件
 		private function buttonUp():void
 		{
 			if(_displacement)
 			{
 				x--;y--;
 				stage.removeEventListener(MouseEvent.MOUSE_UP,onStageMouseUp);
+				_stageHasListen = false;
 			}
 		}
 		
@@ -147,6 +149,7 @@ package coffe.controls
 			{
 				x++;y++;
 				stage.addEventListener(MouseEvent.MOUSE_UP,onStageMouseUp);
+				_stageHasListen = true;
 			}
 		}
 		
@@ -155,9 +158,11 @@ package coffe.controls
 			buttonUp();
 		}
 		
-		protected function onRemoveFromState(event:Event):void
+		protected function onRemoveFromStage(event:Event):void
 		{
-			buttonUp();
+			if(_stageHasListen){
+				buttonUp();
+			}
 		}
 		
 		protected function startPress():void {
