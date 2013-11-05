@@ -212,6 +212,11 @@ package coffe.controls
 			selectedData = _data.getItemAt(_selectedIndex);
 		}
 
+		/**
+		 *	将value指定的样式合并到下拉框的列表样式中
+		 * @param value 需要合并的样式信息
+		 * 
+		 */
 		public function set listStyle(value:Object):void
 		{
 			combinStyle(_listStyle,value);
@@ -302,6 +307,25 @@ package coffe.controls
 			{
 				_list.height = _listHeight;
 			}
+		}
+		
+		public function get labelField():String
+		{
+			return _labelField;
+		}
+		/**
+		 *	下拉框的标签字段名.
+		 * @param value
+		 * 
+		 */		
+		public function set labelField(value:String):void
+		{
+			_labelField = _listStyle.labelField = value;
+			if(_list!=null)
+			{
+				_list.labelField=_labelField;
+			}
+			invalidate(InvalidationType.LABEL);
 		}
 		
 		override public function dispose():void
