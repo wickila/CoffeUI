@@ -250,14 +250,20 @@ package coffe.controls
 		{
 			if(_cellRender == value)return;
 			_cellRender = value;
-			var cell:ICellRender = getDisplayObjectInstance(_cellRender) as ICellRender;
-			if(cell is UIComponent)
+			var dis:DisplayObject = getDisplayObjectInstance(_cellRender);
+			if(dis is ICellRender){
+				var cell:ICellRender = dis as ICellRender;
+				if(cell is UIComponent)
+				{
+					UIComponent(cell).drawNow();
+				}
+				_cellHeight = DisplayObject(cell).height;
+				_cellRender = value;
+				invalidate(InvalidationType.CELL_RENDER);
+			}else
 			{
-				UIComponent(cell).drawNow();
+				throw new Error("cellRender must be ICellRender");
 			}
-			_cellHeight = DisplayObject(cell).height;
-			_cellRender = value;
-			invalidate(InvalidationType.CELL_RENDER);
 		}
 
 		public function get labelField():String

@@ -375,6 +375,10 @@ package coffe.controls
 			_hScrollBar.scrollPosition = value;
 			updateScrollRect();
 		}
+		public function get hScrollPosition():Number
+		{
+			return _hScrollBar==null?0:_hScrollBar.scrollPosition;
+		}
 		/**
 		 *	垂直滚动位置,设置此值会主动刷新滚动面板的显示区域.
 		 * @param value 垂直滚动位置.
@@ -384,6 +388,11 @@ package coffe.controls
 		{
 			_vScrollBar.scrollPosition = value;
 			updateScrollRect();
+		}
+		
+		public function get vScrollPosition():Number
+		{
+			return _vScrollBar==null?0:_vScrollBar.scrollPosition;
 		}
 		
 		protected function get vScrollWidth():Number
